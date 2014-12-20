@@ -154,7 +154,7 @@ public class MTRMGui extends GuiContainer
                 tokenTxt.setText(getStackToken(true, inventorySlots.getSlot(editing).getStack()));
                 break;
             default:
-                showOptionsFor(btn.id);
+                if (btn.id >= 0 && btn.id <= 10) showOptionsFor(btn.id);
         }
     }
 
