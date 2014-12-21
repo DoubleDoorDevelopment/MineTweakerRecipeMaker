@@ -1,11 +1,11 @@
 package net.doubledoordev.mtrm.network;
 
-import com.google.common.collect.Lists;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
+import net.doubledoordev.mtrm.MineTweakerRecipeMaker;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -54,22 +54,22 @@ public class MessageSend implements IMessage
         }
     }
 
-    private String getName(boolean noIngredients)
+    private String getName()
     {
         StringBuilder name = new StringBuilder();
-        name.append(remove ? "remove" : "add").append('_');
-        if (!noIngredients)
-        {
-            name.append(shapeless ? "shapeless" : "shaped").append('_');
-            if (mirrored) name.append("mirrored").append('_');
-        }
+        if (mirrored) name.append("mirrored").append('_');
         name.append(data[0]);
         return name.toString().replaceAll("<|>|\\s", "").replace(':', '-').replace('*', 'X');
     }
 
+    private String getFolder()
+    {
+        return "scripts/" + (remove ? "A_remove" : "B_add") + '/' + (shapeless ? "Shapeless" : "Shaped");
+    }
+
     private String getScript(boolean noIngredients, ArrayList<ArrayList<String>> ingredients)
     {
-        StringBuilder script = new StringBuilder();
+        StringBuilder script = new StringBuilder("// File made by ").append(MineTweakerRecipeMaker.NAME).append('\n');
         script.append("recipes.").append(remove ? "remove" : "add");
         if (!noIngredients) script.append(shapeless ? "Shapeless" : "Shaped");
         script.append('(').append(data[0]);
@@ -129,13 +129,14 @@ public class MessageSend implements IMessage
         if (data[0] == null) return new MessageResponse(MessageResponse.Status.NO_OUT);
         if (!remove && noIngredients) return new MessageResponse(MessageResponse.Status.NO_IN);
         int nameId = 0;
-        String name = getName(noIngredients);
+        String name = getName();
+        String folder = getFolder();
         File file;
         do
         {
-            file = new File("scripts", name + '_' + nameId++ + ".zs");
-        }
-        while (file.exists());
+
+            file = new File(folder, name + '_' + nameId++ + ".zs");
+        } while (file.exists());
         if (!file.getParentFile().exists()) file.getParentFile().mkdir();
         try
         {

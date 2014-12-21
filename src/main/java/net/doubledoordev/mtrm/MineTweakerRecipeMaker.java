@@ -20,7 +20,7 @@ import java.util.Map;
 public class MineTweakerRecipeMaker
 {
     public static final String MODID = "MTRM";
-    public static final String NAME  = "MineTweakerRecipeMaker";
+    public static final String NAME = "MineTweakerRecipeMaker";
 
     @Mod.Instance(MODID)
     public static MineTweakerRecipeMaker instance;

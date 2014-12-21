@@ -44,15 +44,8 @@ public class MessageResponse implements IMessage
         {
             if (Minecraft.getMinecraft().currentScreen instanceof MTRMGui)
             {
-                if (message.message == null)
-                {
-                    Minecraft.getMinecraft().displayGuiScreen(null);
-                }
-                else
-                {
-                    MTRMGui gui = ((MTRMGui) Minecraft.getMinecraft().currentScreen);
-                    gui.showMessage(message.message);
-                }
+                MTRMGui gui = ((MTRMGui) Minecraft.getMinecraft().currentScreen);
+                gui.showMessage(message.message);
             }
             return null;
         }

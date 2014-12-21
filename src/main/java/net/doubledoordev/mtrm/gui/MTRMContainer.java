@@ -4,7 +4,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.world.World;
 
 /**
@@ -17,7 +16,7 @@ public class MTRMContainer extends Container
      * The crafting matrix inventory (3x3).
      */
     public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
-    public IInventory        craftResult = new InventoryCraftResult();
+    public IInventory craftResult = new InventoryCraftResult();
 
     public MTRMContainer(InventoryPlayer p_i1808_1_, World world)
     {
@@ -84,7 +83,7 @@ public class MTRMContainer extends Container
                 if (stackHeld != null)
                 {
                     stackHeld = stackHeld.copy();
-                    if (stackSlot != null && stackHeld.isItemEqual(stackSlot))
+                    if (stackSlot != null && stackHeld.isItemEqual(stackSlot) && i == 0)
                     {
                         int max = stackSlot.getMaxStackSize();
                         if (++stackSlot.stackSize > max) stackSlot.stackSize = max;
