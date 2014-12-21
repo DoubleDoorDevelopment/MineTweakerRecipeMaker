@@ -458,7 +458,7 @@ public class MTRMGui extends GuiContainer
     {
         if (editing != -1)
         {
-            this.fontRendererObj.drawString("Editing slot " + editing, -110, -40, 0xFFFFFF);
+            this.fontRendererObj.drawString("Editing slot " + editing, -110, -35, 0xFFFFFF);
             this.fontRendererObj.drawString("Slot Options", -100, 0, 0xFFFFFF);
         }
         this.fontRendererObj.drawString("Recipe Options", this.xSize + 15, 0, 0xFFFFFF);

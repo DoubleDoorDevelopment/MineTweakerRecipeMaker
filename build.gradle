@@ -26,7 +26,7 @@ apply plugin: "forge"
 apply plugin: "maven"
 
 group = "net.doubledoordev.mtrm"
-version = "1.0.0"
+version = "1.1.0"
 
 targetCompatibility = 1.7
 sourceCompatibility = 1.7
