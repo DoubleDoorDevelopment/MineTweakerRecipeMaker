@@ -105,8 +105,8 @@ public class MessageSend implements IMessage
             {
                 if (data[i] != null)
                 {
-                    int row = (i - 1) % 3;
-                    int col = (i - 1) / 3;
+                    int row = (i - 1) / 3;
+                    int col = (i - 1) % 3;
                     noIngredients = false;
                     rowsNull[row] = false;
                     colsNull[col] = false;
@@ -133,7 +133,7 @@ public class MessageSend implements IMessage
         File file;
         do
         {
-            file = new File("scripts", name + nameId++ + ".zs");
+            file = new File("scripts", name + '_' + nameId++ + ".zs");
         }
         while (file.exists());
         if (!file.getParentFile().exists()) file.getParentFile().mkdir();
