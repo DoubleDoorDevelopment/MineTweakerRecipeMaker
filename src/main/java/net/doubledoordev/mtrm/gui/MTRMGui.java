@@ -76,6 +76,7 @@ public class MTRMGui extends GuiContainer
                 if (nextOreDict) lastOreId++;
                 if (lastOreId >= ids.length) lastOreId = 0;
             }
+            else oreDict = false;
         }
         builder.append(stackName);
         if (!oreDict && (metaWildcard || stack.getItemDamage() != 0)) builder.append(':').append(metaWildcard || stack.getItemDamage() == OreDictionary.WILDCARD_VALUE ? "*" : stack.getItemDamage());
@@ -183,7 +184,9 @@ public class MTRMGui extends GuiContainer
         else
         {
             tokenTxt.setText(token);
+            matchAll.enabled = id != 0;
             matchAll.setIsChecked(MATCH_ALL.matcher(token).find());
+            metaWildcard.enabled = id != 0;
             metaWildcard.setIsChecked(matchAll.isChecked() || META_WILDCARD.matcher(token).find());
             oreDict.enabled = id != 0;
             oreDict.setIsChecked(ORE_DICT.matcher(token).find() && id != 0);
