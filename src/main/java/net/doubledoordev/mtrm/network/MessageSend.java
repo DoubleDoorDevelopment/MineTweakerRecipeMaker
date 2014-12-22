@@ -127,7 +127,7 @@ public class MessageSend implements IMessage
         if (data[0] == null) return new MessageResponse(MessageResponse.Status.NO_OUT);
         if (!remove && noIngredients) return new MessageResponse(MessageResponse.Status.NO_IN);
         File file = new File("scripts/MineTweakerRecipeMaker/scripts/", "Crafting.zs");
-        if (!file.getParentFile().exists()) file.getParentFile().mkdir();
+        if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
         if (!file.exists())
         {
             try
