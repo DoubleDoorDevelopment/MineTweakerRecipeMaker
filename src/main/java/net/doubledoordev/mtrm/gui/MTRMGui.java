@@ -4,6 +4,7 @@ import cpw.mods.fml.client.config.GuiButtonExt;
 import cpw.mods.fml.client.config.GuiCheckBox;
 import cpw.mods.fml.client.config.GuiSlider;
 import cpw.mods.fml.common.registry.GameData;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.doubledoordev.mtrm.MineTweakerRecipeMaker;
 import net.doubledoordev.mtrm.network.MessageSend;
 import net.minecraft.client.gui.GuiButton;
@@ -20,6 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static net.doubledoordev.mtrm.gui.MTRMContainer.RETURN_SLOT_ID;
 
 /**
  * @author Dries007
@@ -39,6 +42,7 @@ public class MTRMGui extends GuiContainer
     private static final Pattern ONLY_DAMAGE_BETWEEN = Pattern.compile("\\.onlyDamageBetween\\((\\d+), ?(\\d+)\\)");
     private static final Pattern WITH_DAMAGE = Pattern.compile("\\.withDamage\\((\\d+)\\)");
     private static final Pattern TRANSFORM_DAMAGE = Pattern.compile("\\.transformDamage\\((\\d+)\\)");
+    private static final Pattern GIVE_BACK = Pattern.compile("\\.giveBack\\(<(.*):(.*)(:\\d+)?>(?: ?\\* ?(\\d+))\\)");
 
     private static final int ID_SEND = 10;
     private static final int ID_REMOVE = 11;
@@ -59,6 +63,7 @@ public class MTRMGui extends GuiContainer
     private static final int ID_OPTION_REUSE = 26;
     private static final int ID_OPTION_ID_OPTION_TRANSFORM_DAMAGE = 27;
     private static final int ID_OPTION_NO_RETURN = 28;
+    private static final int ID_OPTION_RETURN_OK = 29;
 
     private final GuiSlider.ISlider iSlider = new GuiSlider.ISlider()
     {
@@ -88,6 +93,7 @@ public class MTRMGui extends GuiContainer
     private GuiCheckBox reuse;
     private GuiCheckBox noReturn;
     private GuiCheckBox transformDamage;
+    private GuiButtonExt returnOk;
     private Map<GuiCheckBox, GuiSlider[]> sliders = new HashMap<>();
     private Map<GuiCheckBox, Pattern> patterns = new HashMap<>();
     private Map<GuiCheckBox, GuiCustomLabel[]> labels = new HashMap<>();
@@ -129,6 +135,7 @@ public class MTRMGui extends GuiContainer
         builder.append(stackName);
         if (!oreDict && (metaWildcard || stack.getItemDamage() != 0)) builder.append(':').append(metaWildcard || stack.getItemDamage() == OreDictionary.WILDCARD_VALUE ? "*" : stack.getItemDamage());
         builder.append('>');
+        if (stack.stackSize > 1) builder.append(" * ").append(stack.stackSize);
         if (anyDamage.isChecked()) builder.append(".anyDamage()");
         if (onlyDamaged.isChecked()) builder.append(".onlyDamaged()");
         if (withDamage.isChecked()) builder.append(".withDamage(").append(sliders.get(withDamage)[0].getValueInt()).append(')');
@@ -136,8 +143,16 @@ public class MTRMGui extends GuiContainer
         if (onlyDamageAtMost.isChecked()) builder.append(".onlyDamageAtMost(").append(sliders.get(onlyDamageAtMost)[0].getValueInt()).append(')');
         if (onlyDamageBetween.isChecked()) builder.append(".onlyDamageBetween(").append(sliders.get(onlyDamageBetween)[0].getValueInt()).append(", ").append(sliders.get(onlyDamageBetween)[1].getValueInt()).append(')');
         if (reuse.isChecked()) builder.append(".reuse()");
+        if (noReturn.isChecked()) builder.append(".noReturn()");
         if (transformDamage.isChecked()) builder.append(".transformDamage(").append(sliders.get(transformDamage)[0].getValueInt()).append(')');
-        if (stack.stackSize > 1) builder.append(" * ").append(stack.stackSize);
+        if (container.getSlot(RETURN_SLOT_ID).getHasStack())
+        {
+            ItemStack returnStack = container.getSlot(RETURN_SLOT_ID).getStack();
+            builder.append(".giveBack(<").append(GameData.getItemRegistry().getNameForObject(returnStack.getItem()));
+            if (returnStack.getItemDamage() != 0) builder.append(':').append(returnStack.getItemDamage());
+            if (returnStack.stackSize > 1) builder.append(" * ").append(returnStack.stackSize);
+            builder.append(">)");
+        }
         return builder.toString();
     }
 
@@ -157,7 +172,7 @@ public class MTRMGui extends GuiContainer
         this.buttonList.add(new GuiButtonExt(ID_CLOSE, this.width / 2 + 90, this.height / 2 - 25, 110, 20, "Close"));
 
         int wOffset = this.width / 2 - 200;
-        int hOffset = this.height / 2 - 90;
+        int hOffset = this.height / 2 - 110;
 
         tokenTxt = new GuiTextField(this.fontRendererObj, wOffset, hOffset - 25, 220 + this.xSize, 20);
         tokenTxt.setMaxStringLength(Integer.MAX_VALUE);
@@ -175,8 +190,10 @@ public class MTRMGui extends GuiContainer
         this.buttonList.add(reuse = new GuiCheckBox(ID_OPTION_REUSE, wOffset, hOffset += 10, "Reuse", false));
         this.buttonList.add(noReturn = new GuiCheckBox(ID_OPTION_NO_RETURN, wOffset, hOffset += 10, "No Return", false));
 
-        this.buttonList.add(nextOreDict = new GuiButtonExt(ID_OPTION_NEXT_OREDICT, wOffset, hOffset += 20, 110, 20, "Next oredict value"));
-        this.buttonList.add(optionsOk = new GuiButtonExt(ID_OPTION_OK, wOffset, hOffset += 20, 110, 20, "Ok!"));
+        this.buttonList.add(returnOk = new GuiButtonExt(ID_OPTION_RETURN_OK, wOffset + 90, hOffset + 14, 20, 18, "OK"));
+
+        this.buttonList.add(nextOreDict = new GuiButtonExt(ID_OPTION_NEXT_OREDICT, wOffset, hOffset += 40, 110, 20, "Next oredict value"));
+        this.buttonList.add(optionsOk = new GuiButtonExt(ID_OPTION_OK, wOffset, hOffset += 20, 110, 20, "Save changes!"));
 
         // Buttongroups
 
@@ -191,7 +208,7 @@ public class MTRMGui extends GuiContainer
 
         id = 100;
         hOffset += 30;
-        int hOffsetText = 181;
+        int hOffsetText = 182;
 
         addSliders(withDamage, new GuiSlider(id++, wOffset, hOffset, 220 + this.xSize, 20, "X = ", "", 0, 0, 0, false, true, iSlider));
         addLabels(withDamage, new GuiCustomLabel("With Damage X", -110, hOffsetText));
@@ -244,6 +261,10 @@ public class MTRMGui extends GuiContainer
             messageSend.data[slotNumber] = getStackToken(false, slot.getStack());
             showOptionsFor(slotNumber);
         }
+        if (slotNumber == RETURN_SLOT_ID)
+        {
+            tokenTxt.setText(getStackToken(true, inventorySlots.getSlot(editing).getStack()));
+        }
     }
 
     protected void actionPerformed(GuiButton btn)
@@ -294,6 +315,7 @@ public class MTRMGui extends GuiContainer
             case ID_OPTION_OREDICT:
                 nextOreDict.enabled = oreDict.isChecked();
             case ID_OPTION_NEXT_OREDICT:
+            case ID_OPTION_RETURN_OK:
                 tokenTxt.setText(getStackToken(true, inventorySlots.getSlot(editing).getStack()));
                 break;
             default:
@@ -351,7 +373,7 @@ public class MTRMGui extends GuiContainer
                     if (labels.containsKey(checkBox)) for (GuiCustomLabel l : labels.get(checkBox)) l.draw = false;
                 }
             }
-
+            container.getSlot(RETURN_SLOT_ID).putStack(null);
         }
         else
         {
@@ -374,6 +396,14 @@ public class MTRMGui extends GuiContainer
                         radioBoxToggle(checkBox, group);
                     }
                 }
+            }
+
+            Matcher m = GIVE_BACK.matcher(token);
+            if (m.find())
+            {
+                int meta = m.group(3) != null ? Integer.parseInt(m.group(3)) : 0;
+                int size = m.group(4) != null ? Integer.parseInt(m.group(4)) : 1;
+                container.getSlot(RETURN_SLOT_ID).putStack(new ItemStack(GameRegistry.findItem(m.group(1), m.group(2)), size, meta));
             }
         }
 
@@ -423,6 +453,7 @@ public class MTRMGui extends GuiContainer
         withDamage.visible = visible;
         onlyDamaged.visible = visible;
         reuse.visible = visible;
+        returnOk.visible = visible;
 
         for (GuiCheckBox[] group : allGroups)
         {
@@ -435,6 +466,8 @@ public class MTRMGui extends GuiContainer
         }
 
         tokenTxt.setVisible(visible);
+
+        if (!visible) container.putStackInSlot(RETURN_SLOT_ID, null);
     }
 
     protected void keyTyped(char p_73869_1_, int p_73869_2_)
@@ -458,13 +491,14 @@ public class MTRMGui extends GuiContainer
     {
         if (editing != -1)
         {
-            this.fontRendererObj.drawString("Editing slot " + editing, -110, -35, 0xFFFFFF);
-            this.fontRendererObj.drawString("Slot Options", -100, 0, 0xFFFFFF);
+            this.fontRendererObj.drawString("Editing slot " + editing, -110, -55, 0xFFFFFF);
+            this.fontRendererObj.drawString("Slot Options", -100, -20, 0xFFFFFF);
+            this.fontRendererObj.drawString("Return Slot", -100, 120, 0xFFFFFF);
         }
         this.fontRendererObj.drawString("Recipe Options", this.xSize + 15, 0, 0xFFFFFF);
         this.fontRendererObj.drawString("MineTweaker Recipe Maker", 28, 4, 4210752);
         this.fontRendererObj.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 5, 4210752);
-        if (errorMessage != null) this.fontRendererObj.drawString(errorMessage, 28, -10, 0xFF0000);
+        if (errorMessage != null) this.drawCenteredString(this.fontRendererObj, errorMessage, this.xSize / 2, -15, 0xFF0000);
         this.fontRendererObj.drawString("0", 144, 53, 0xFFFFFF);
         for (int y = 0; y < 3; ++y) for (int x = 0; x < 3; ++x) this.fontRendererObj.drawString(String.valueOf(1 + y * 3 + x), 28 + x * 26, 25 + y * 26, 0xFFFFFF);
         for (GuiCustomLabel[] labela : labels.values()) for (GuiCustomLabel label : labela) if (label.draw) this.fontRendererObj.drawString(label.text, label.x, label.y, label.color);
@@ -477,6 +511,7 @@ public class MTRMGui extends GuiContainer
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
+        if (editing != -1) this.drawTexturedModalRect(k - 40, l + 114, 21, 20, 18, 18);
         tokenTxt.drawTextBox();
     }
 
