@@ -557,6 +557,7 @@ public class MTRMGui extends GuiContainer
     private abstract class GuiCustomLabel
     {
         boolean draw = false;
+
         public abstract void draw(boolean b);
     }
 
