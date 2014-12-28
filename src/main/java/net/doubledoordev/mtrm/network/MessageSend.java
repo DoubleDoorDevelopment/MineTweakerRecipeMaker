@@ -5,11 +5,13 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
+import minetweaker.MineTweakerImplementationAPI;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -187,6 +189,14 @@ public class MessageSend implements IMessage
             }
             if (!i.hasNext()) return new MessageResponse(MessageResponse.Status.WRITE_ERROR, "Cannot find " + marker + " . Did you edit the file manually?");
             FileUtils.writeLines(file, lines);
+            try
+            {
+                Class.forName("minetweaker.MineTweakerImplementationAPI").getDeclaredMethod("reload").invoke(null);
+            }
+            catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored)
+            {
+
+            }
         }
         catch (IOException e)
         {

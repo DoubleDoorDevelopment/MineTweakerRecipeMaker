@@ -35,6 +35,7 @@ public class MTRMGui extends GuiContainer
     private static final Pattern META_WILDCARD = Pattern.compile(":\\*>");
     private static final Pattern ORE_DICT = Pattern.compile("<ore:.*>");
     private static final Pattern REUSE = Pattern.compile("\\.reuse\\(\\)");
+    private static final Pattern NO_RETURN = Pattern.compile("\\.noReturn\\(\\)");
     private static final Pattern ANY_DAMAGE = Pattern.compile("\\.anyDamage\\(\\)");
     private static final Pattern ONLY_DAMAGE = Pattern.compile("\\.onlyDamaged\\(\\)");
     private static final Pattern ONLY_DAMAGE_AT_MOST = Pattern.compile("\\.onlyDamageAtMost\\((\\d+)\\)");
@@ -43,6 +44,7 @@ public class MTRMGui extends GuiContainer
     private static final Pattern WITH_DAMAGE = Pattern.compile("\\.withDamage\\((\\d+)\\)");
     private static final Pattern TRANSFORM_DAMAGE = Pattern.compile("\\.transformDamage\\((\\d+)\\)");
     private static final Pattern GIVE_BACK = Pattern.compile("\\.giveBack\\(<(.*):(.*)(:\\d+)?>(?: ?\\* ?(\\d+))\\)");
+    private static final Pattern TRANSFORM_REPLACE = Pattern.compile("\\.transformReplace\\(<(.*):(.*)(:\\d+)?>(?: ?\\* ?(\\d+))\\)");
 
     private static final int ID_SEND = 10;
     private static final int ID_REMOVE = 11;
@@ -64,6 +66,8 @@ public class MTRMGui extends GuiContainer
     private static final int ID_OPTION_ID_OPTION_TRANSFORM_DAMAGE = 27;
     private static final int ID_OPTION_NO_RETURN = 28;
     private static final int ID_OPTION_RETURN_OK = 29;
+    private static final int ID_OPTION_ID_OPTION_TRANSFORM_REPLACE = 30;
+    private static final int ID_OPTION_GIVE_BACK = 31;
 
     private final GuiSlider.ISlider iSlider = new GuiSlider.ISlider()
     {
@@ -93,6 +97,8 @@ public class MTRMGui extends GuiContainer
     private GuiCheckBox reuse;
     private GuiCheckBox noReturn;
     private GuiCheckBox transformDamage;
+    private GuiCheckBox transformReplace;
+    private GuiCheckBox giveBack;
     private GuiButtonExt returnOk;
     private Map<GuiCheckBox, GuiSlider[]> sliders = new HashMap<>();
     private Map<GuiCheckBox, Pattern> patterns = new HashMap<>();
@@ -145,13 +151,18 @@ public class MTRMGui extends GuiContainer
         if (reuse.isChecked()) builder.append(".reuse()");
         if (noReturn.isChecked()) builder.append(".noReturn()");
         if (transformDamage.isChecked()) builder.append(".transformDamage(").append(sliders.get(transformDamage)[0].getValueInt()).append(')');
-        if (container.getSlot(RETURN_SLOT_ID).getHasStack())
+        if (container.getSlot(RETURN_SLOT_ID).getHasStack() && (giveBack.isChecked() || transformReplace.isChecked()))
         {
             ItemStack returnStack = container.getSlot(RETURN_SLOT_ID).getStack();
-            builder.append(".giveBack(<").append(GameData.getItemRegistry().getNameForObject(returnStack.getItem()));
+
+            if (giveBack.isChecked()) builder.append(".giveBack(<");
+            else if (transformReplace.isChecked()) builder.append(".transformReplace(<");
+
+            builder.append(GameData.getItemRegistry().getNameForObject(returnStack.getItem()));
             if (returnStack.getItemDamage() != 0) builder.append(':').append(returnStack.getItemDamage());
+            builder.append('>');
             if (returnStack.stackSize > 1) builder.append(" * ").append(returnStack.stackSize);
-            builder.append(">)");
+            builder.append(')');
         }
         return builder.toString();
     }
@@ -187,10 +198,10 @@ public class MTRMGui extends GuiContainer
         this.buttonList.add(onlyDamageAtMost = new GuiCheckBox(ID_OPTION_ONLY_DAMAGE_AT_MOST, wOffset, hOffset += 10, "With Damage < X", false));
         this.buttonList.add(onlyDamageBetween = new GuiCheckBox(ID_OPTION_ONLY_DAMAGE_BETWEEN, wOffset, hOffset += 10, "With X > Damage > Y", false));
         this.buttonList.add(transformDamage = new GuiCheckBox(ID_OPTION_ID_OPTION_TRANSFORM_DAMAGE, wOffset, hOffset += 10, "Transform Damage", false));
+        this.buttonList.add(transformReplace = new GuiCheckBox(ID_OPTION_ID_OPTION_TRANSFORM_REPLACE, wOffset, hOffset += 10, "Transform Replace", false));
         this.buttonList.add(reuse = new GuiCheckBox(ID_OPTION_REUSE, wOffset, hOffset += 10, "Reuse", false));
         this.buttonList.add(noReturn = new GuiCheckBox(ID_OPTION_NO_RETURN, wOffset, hOffset += 10, "No Return", false));
-
-        this.buttonList.add(returnOk = new GuiButtonExt(ID_OPTION_RETURN_OK, wOffset + 90, hOffset + 14, 20, 18, "OK"));
+        this.buttonList.add(giveBack = new GuiCheckBox(ID_OPTION_GIVE_BACK, wOffset, hOffset += 10, "GiveBack", false));
 
         this.buttonList.add(nextOreDict = new GuiButtonExt(ID_OPTION_NEXT_OREDICT, wOffset, hOffset += 40, 110, 20, "Next oredict value"));
         this.buttonList.add(optionsOk = new GuiButtonExt(ID_OPTION_OK, wOffset, hOffset += 20, 110, 20, "Save changes!"));
@@ -198,7 +209,7 @@ public class MTRMGui extends GuiContainer
         // Buttongroups
 
         allDamage = new GuiCheckBox[]{matchAll, metaWildcard, anyDamage, onlyDamaged, withDamage, onlyDamageAtLeast, onlyDamageAtMost, onlyDamageBetween};
-        allTransform = new GuiCheckBox[]{transformDamage, reuse, noReturn};
+        allTransform = new GuiCheckBox[]{transformDamage, transformReplace, reuse, noReturn, giveBack};
         allGroups = new GuiCheckBox[][]{allDamage, allTransform};
 
         addPatterns(matchAll, MATCH_ALL);
@@ -206,31 +217,56 @@ public class MTRMGui extends GuiContainer
         addPatterns(anyDamage, ANY_DAMAGE);
         addPatterns(onlyDamaged, ONLY_DAMAGE);
 
+        addPatterns(reuse, REUSE);
+        addPatterns(noReturn, NO_RETURN);
+
         id = 100;
         hOffset += 30;
-        int hOffsetText = 182;
+        int hOffsetText = hOffset - this.guiTop - 10;
+
+        GuiCustomLabel returnSlot = new GuiCustomLabel()
+        {
+            @Override
+            public void draw(boolean b)
+            {
+                if (!b) drawTexturedModalRect(((width - xSize) / 2) - 110, ((height - ySize) / 2) + 142, 21, 20, 18, 18);
+            }
+        };
+        addLabels(transformReplace, returnSlot, new GuiCustomLabelText("Transform Replace:", -110, hOffsetText - 68));
+        addPatterns(transformReplace, TRANSFORM_REPLACE);
+        returnSlot = new GuiCustomLabel()
+        {
+            @Override
+            public void draw(boolean b)
+            {
+                if (!b) drawTexturedModalRect(((width - xSize) / 2) - 110, ((height - ySize) / 2) + 142, 21, 20, 18, 18);
+            }
+        };
+        addLabels(giveBack, returnSlot, new GuiCustomLabelText("Give Back:", -110, hOffsetText - 68));
+        addPatterns(giveBack, GIVE_BACK);
+        this.buttonList.add(returnOk = new GuiButtonExt(ID_OPTION_RETURN_OK, wOffset + 20, hOffset - 68, 20, 18, "OK"));
 
         addSliders(withDamage, new GuiSlider(id++, wOffset, hOffset, 220 + this.xSize, 20, "X = ", "", 0, 0, 0, false, true, iSlider));
-        addLabels(withDamage, new GuiCustomLabel("With Damage X", -110, hOffsetText));
+        addLabels(withDamage, new GuiCustomLabelText("With Damage X", -110, hOffsetText));
         addPatterns(withDamage, WITH_DAMAGE);
 
         addSliders(onlyDamageAtLeast, new GuiSlider(id++, wOffset, hOffset, 220 + this.xSize, 20, "X = ", "", 0, 0, 0, false, true, iSlider));
-        addLabels(onlyDamageAtLeast, new GuiCustomLabel("With Damage >= X", -110, hOffsetText));
+        addLabels(onlyDamageAtLeast, new GuiCustomLabelText("With Damage >= X", -110, hOffsetText));
         addPatterns(onlyDamageAtLeast, ONLY_DAMAGE_AT_LEAST);
 
         addSliders(onlyDamageAtMost, new GuiSlider(id++, wOffset, hOffset, 220 + this.xSize, 20, "X = ", "", 0, 0, 0, false, true, iSlider));
-        addLabels(onlyDamageAtMost, new GuiCustomLabel("With Damage < X", -110, hOffsetText));
+        addLabels(onlyDamageAtMost, new GuiCustomLabelText("With Damage < X", -110, hOffsetText));
         addPatterns(onlyDamageAtMost, ONLY_DAMAGE_AT_MOST);
 
         addSliders(onlyDamageBetween, new GuiSlider(id++, wOffset, hOffset, 220 + this.xSize, 20, "X = ", "", 0, 0, 0, false, true, iSlider), new GuiSlider(id++, wOffset, hOffset + 20, 220 + this.xSize, 20, "Y = ", "", 0, 0, 0, false, true, iSlider));
-        addLabels(onlyDamageBetween, new GuiCustomLabel("With X > Damage > Y", -110, hOffsetText));
+        addLabels(onlyDamageBetween, new GuiCustomLabelText("With X > Damage > Y", -110, hOffsetText));
         addPatterns(onlyDamageBetween, ONLY_DAMAGE_BETWEEN);
 
         hOffset += 50;
         hOffsetText += 50;
 
         addSliders(transformDamage, new GuiSlider(id++, wOffset, hOffset, 220 + this.xSize, 20, "X = ", "", 0, 0, 0, false, true, iSlider));
-        addLabels(transformDamage, new GuiCustomLabel("Transform with X damage", -110, hOffsetText));
+        addLabels(transformDamage, new GuiCustomLabelText("Transform with X damage", -110, hOffsetText));
         addPatterns(transformDamage, TRANSFORM_DAMAGE);
 
         setOptionsVisible(false);
@@ -307,8 +343,10 @@ public class MTRMGui extends GuiContainer
                 tokenTxt.setText(getStackToken(false, inventorySlots.getSlot(editing).getStack()));
                 break;
             case ID_OPTION_ID_OPTION_TRANSFORM_DAMAGE:
+            case ID_OPTION_ID_OPTION_TRANSFORM_REPLACE:
             case ID_OPTION_REUSE:
             case ID_OPTION_NO_RETURN:
+            case ID_OPTION_GIVE_BACK:
                 radioBoxToggle((GuiCheckBox) btn, allTransform);
                 tokenTxt.setText(getStackToken(false, inventorySlots.getSlot(editing).getStack()));
                 break;
@@ -382,9 +420,6 @@ public class MTRMGui extends GuiContainer
             oreDict.enabled = id != 0;
             oreDict.setIsChecked(ORE_DICT.matcher(token).find() && id != 0);
             nextOreDict.enabled = oreDict.isChecked() && id != 0;
-
-            reuse.enabled = id != 0;
-            reuse.setIsChecked(REUSE.matcher(token).find());
 
             for (GuiCheckBox[] group : allGroups)
             {
@@ -493,7 +528,6 @@ public class MTRMGui extends GuiContainer
         {
             this.fontRendererObj.drawString("Editing slot " + editing, -110, -55, 0xFFFFFF);
             this.fontRendererObj.drawString("Slot Options", -100, -20, 0xFFFFFF);
-            this.fontRendererObj.drawString("Return Slot", -100, 120, 0xFFFFFF);
         }
         this.fontRendererObj.drawString("Recipe Options", this.xSize + 15, 0, 0xFFFFFF);
         this.fontRendererObj.drawString("MineTweaker Recipe Maker", 28, 4, 4210752);
@@ -501,7 +535,7 @@ public class MTRMGui extends GuiContainer
         if (errorMessage != null) this.drawCenteredString(this.fontRendererObj, errorMessage, this.xSize / 2, -15, 0xFF0000);
         this.fontRendererObj.drawString("0", 144, 53, 0xFFFFFF);
         for (int y = 0; y < 3; ++y) for (int x = 0; x < 3; ++x) this.fontRendererObj.drawString(String.valueOf(1 + y * 3 + x), 28 + x * 26, 25 + y * 26, 0xFFFFFF);
-        for (GuiCustomLabel[] labela : labels.values()) for (GuiCustomLabel label : labela) if (label.draw) this.fontRendererObj.drawString(label.text, label.x, label.y, label.color);
+        for (GuiCustomLabel[] labela : labels.values()) for (GuiCustomLabel label : labela) if (label.draw) label.draw(true);
     }
 
     protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_)
@@ -511,7 +545,7 @@ public class MTRMGui extends GuiContainer
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
-        if (editing != -1) this.drawTexturedModalRect(k - 40, l + 114, 21, 20, 18, 18);
+        for (GuiCustomLabel[] labela : labels.values()) for (GuiCustomLabel label : labela) if (label.draw) label.draw(false);
         tokenTxt.drawTextBox();
     }
 
@@ -520,18 +554,28 @@ public class MTRMGui extends GuiContainer
         this.errorMessage = message;
     }
 
-    private class GuiCustomLabel
+    private abstract class GuiCustomLabel
+    {
+        boolean draw = false;
+        public abstract void draw(boolean b);
+    }
+
+    private class GuiCustomLabelText extends GuiCustomLabel
     {
         String text;
-        int x, y;
         int color = 0xFFFFFF;
-        boolean draw = false;
+        int x, y;
 
-        public GuiCustomLabel(String s, int x, int y)
+        public GuiCustomLabelText(String s, int x, int y)
         {
-            this.text = s;
             this.x = x;
             this.y = y;
+            this.text = s;
+        }
+
+        public void draw(boolean b)
+        {
+            if (b) fontRendererObj.drawString(text, x, y, color);
         }
     }
 }

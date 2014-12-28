@@ -24,7 +24,7 @@ public class MTRMContainer extends Container
         for (int y = 0; y < 3; ++y) for (int x = 0; x < 3; ++x) this.addSlotToContainer(new Slot(this.craftMatrix, x + y * 3, 22 + x * 26, 21 + y * 26));
         for (int y = 0; y < 3; ++y) for (int x = 0; x < 9; ++x) this.addSlotToContainer(new Slot(p_i1808_1_, x + y * 9 + 9, 8 + x * 18, 99 + y * 18));
         for (int x = 0; x < 9; ++x) this.addSlotToContainer(new Slot(p_i1808_1_, x, 8 + x * 18, 157));
-        this.addSlotToContainer(new Slot(returnSlot, 0, -39, 115));
+        this.addSlotToContainer(new Slot(returnSlot, 0, -109, 143));
 
         this.onCraftMatrixChanged(this.craftMatrix);
     }
