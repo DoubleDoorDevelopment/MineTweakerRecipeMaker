@@ -1,14 +1,12 @@
 .gradle
 build
-jars
+run
 out
 *.iml
 *.ipr
 *.iws
 .idea
-*.txt
 *.json
 gradlew
 gradlew.bat
-gradle
 eclipse
