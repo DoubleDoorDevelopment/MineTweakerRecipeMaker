@@ -1,7 +1,8 @@
 MineTweakerRecipeMaker
 ======================
 
-Oh god, its is finally here!<br>
+v2.x Now with support for more than just crafting!
+
 The one and only **MineTweakerRecipeMaker**!
 
 This mod creates the .zs file on the server's side, that is why you need the mod on the server too (and need to be op).
@@ -14,12 +15,14 @@ This mod has no relation with MineTweaker itself, and MineTweaker is not a depen
 How to use
 ----------
 
-Command: "/mtrm" or "/MineTweakerRecipeMaker"
+Command: "/mtrm [type]" or "/MineTweakerRecipeMaker [type]"
 
 Download
 --------
 
-We have downloads on [curseforge](http://minecraft.curseforge.com/mc-mods/226294-minetweaker-recipemaker) and on [our website](http://doubledoordev.net/) (more up to date).
+v2.x Does not have public releases yet. Compile it yourself or wait!
+
+~~We have downloads on [curseforge](http://minecraft.curseforge.com/mc-mods/226294-minetweaker-recipemaker) and on [our website](http://doubledoordev.net/) (more up to date).~~
 
 Modpacks & license
 ------------------

@@ -1,30 +1,30 @@
 package net.doubledoordev.mtrm;
 
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.NetworkCheckHandler;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.relauncher.Side;
-import net.doubledoordev.mtrm.gui.MTRMGuiHandler;
-import net.doubledoordev.mtrm.network.MessageResponse;
-import net.doubledoordev.mtrm.network.MessageSend;
+import net.doubledoordev.mtrm.gui.GuiHandler;
+import net.doubledoordev.mtrm.network.MessageConfirmEdit;
+import net.doubledoordev.mtrm.network.MessageList;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.network.NetworkCheckHandler;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
 /**
  * @author Dries007
  */
-@Mod(modid = MineTweakerRecipeMaker.MODID, name = MineTweakerRecipeMaker.NAME)
+@Mod(modid = Helper.MODID, name = Helper.NAME)
 public class MineTweakerRecipeMaker
 {
-    public static final String MODID = "MTRM";
-    public static final String NAME = "MineTweakerRecipeMaker";
-
-    @Mod.Instance(MODID)
+    @SuppressWarnings("WeakerAccess")
+    @Mod.Instance(Helper.MODID)
     public static MineTweakerRecipeMaker instance;
-
+    public static Logger log;
     private SimpleNetworkWrapper snw;
 
     public static SimpleNetworkWrapper getSnw()
@@ -35,23 +35,32 @@ public class MineTweakerRecipeMaker
     @Mod.EventHandler
     public void init(FMLPreInitializationEvent event)
     {
-        NetworkRegistry.INSTANCE.registerGuiHandler(this, new MTRMGuiHandler());
+        log = event.getModLog();
+
+        NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 
         int id = 0;
-        snw = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
-        snw.registerMessage(MessageSend.Handler.class, MessageSend.class, id++, Side.SERVER);
-        snw.registerMessage(MessageResponse.Handler.class, MessageResponse.class, id++, Side.CLIENT);
+        snw = NetworkRegistry.INSTANCE.newSimpleChannel(Helper.MODID);
+        snw.registerMessage(MessageList.Handler.class, MessageList.class, id++, Side.CLIENT);
+        snw.registerMessage(MessageList.Handler.class, MessageList.class, id++, Side.SERVER);
+        snw.registerMessage(MessageConfirmEdit.Handler.class, MessageConfirmEdit.class, id++, Side.CLIENT);
+    }
+
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent event)
+    {
+        //todo: load xml and or check github for updated version
     }
 
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event)
     {
-        event.registerServerCommand(new MTRMCommand());
+        event.registerServerCommand(new Command());
     }
 
     @NetworkCheckHandler
     public boolean networkCheckHandler(Map<String, String> map, Side side)
     {
-        return side.isClient() || map.containsKey(MODID);
+        return side.isClient() || map.containsKey(Helper.MODID);
     }
 }

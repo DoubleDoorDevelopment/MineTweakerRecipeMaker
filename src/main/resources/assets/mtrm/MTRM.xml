@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE MTRM SYSTEM "MTRM.dtd">
+<MTRM>
+    <modifier name="Any damage" out="item">.anyDamage()</modifier>
+    <modifier name="With damage" out="item">.anyDamage(<number/>)
+    </modifier>
+    <modifier name="With NBT tag" out="item">.withTag(<nbt/>)
+    </modifier>
+    <modifier name="Only with NBT tag">.withTag(<nbt/>)
+    </modifier>
+    <modifier name="Only damaged">.onlyDamaged()</modifier>
+    <modifier name="Only with n damage">.onlyDamaged(<number/>)
+    </modifier>
+    <modifier name="Only with &lt;n damage">.onlyDamageAtLeast(<number/>)
+    </modifier>
+    <modifier name="Only with &gt;n damage">.onlyDamageAtMost(<number/>)
+    </modifier>
+    <modifier name="Only with &gt;n and &lt;m damage">.onlyDamageBetween(<number/>,<number/>)
+    </modifier>
+    <modifier name="Reusable item (no damage)" in="ingredient">.reuse()</modifier>
+    <modifier name="Reusable item (1 damage)" in="ingredient">.transformDamage()</modifier>
+    <modifier name="Reusable item (custom damage)" in="ingredient">.transformDamage(<number/>)
+    </modifier>
+    <modifier name="Replace item" in="ingredient">.transformReplace(<slot type="item"/>)
+    </modifier>
+    <modifier name="Don't return item" in="ingredient">.noReturn()</modifier>
+    <modifier name="Return item in inventory" in="ingredient">.giveBack(<slot type="item"/>)
+    </modifier>
+
+    <function name="Remove all crafting">
+        recipes.remove(<slot type="item"/>);
+    </function>
+
+    <function name="Remove all shapeless crafting">
+        recipes.removeShapeless(<slot type="item"/>);
+    </function>
+    <function name="Remove all shaped crafting">
+        recipes.removeShaped(<slot type="item"/>);
+    </function>
+    <function name="Remove shapeless crafting">
+        recipes.removeShapeless(<slot type="item"/>,
+        <array max="9">
+            <slot type="ingredient"/>
+        </array>
+        );
+    </function>
+    <function name="Remove shaped crafting">
+        recipes.removeShaped(<slot type="item"/>,
+        <array max="3">
+            <array max="3">
+                <slot type="ingredient"/>
+            </array>
+        </array>
+        );
+    </function>
+    <function name="Add shapeless">
+        recipes.addShapeless(<slot type="item"/>,
+        <array max="9">
+            <slot type="ingredient"/>
+        </array>
+        );
+    </function>
+    <function name="Add shaped">
+        recipes.addShaped(<slot type="item"/>,
+        <array max="3">
+            <array max="3">
+                <slot type="ingredient"/>
+            </array>
+        </array>
+        );
+    </function>
+    <function name="Add to ore dictionary entry">
+        <oredict/>.add(<slot type="item" metawildcard="true"/>);
+    </function>
+    <function name="Remove from ore dictionary entry">
+        <oredict/>.add(<slot type="item" metawildcard="true"/>);
+    </function>
+    <function name="Mirror ore dictionary to another">
+        <oredict/>.mirror(<oredict/>);
+    </function>
+    <function name="Add all ore dictionary entries to another">
+        <oredict/>.addAll(<oredict/>);
+    </function>
+    <function name="Remove furnace recipe">
+        furnace.remove(<slot type="ingredient"/>);
+    </function>
+    <function name="Remove specific furnace recipe">
+        furnace.remove(<slot type="item"/>,<slot type="ingredient"/>);
+    </function>
+    <function name="Add furnace recipe">
+        furnace.addRecipe(<slot type="item"/>,<slot type="ingredient"/>);
+    </function>
+    <function name="Add furnace recipe with XP">
+        furnace.addRecipe(<slot type="item"/>,<slot type="ingredient"/>,<number stepsize="0.01"/>);
+    </function>
+    <function name="Set fuel">
+        furnace.setFuel(<slot type="ingredient" stacksize="false"/>,<number/>);
+    </function>
+    <function name="Set displayName">
+        <slot type="item" stacksize="false"/>.displayName = "<string/>";
+    </function>
+    <function name="Add tooltip">
+        <slot type="ingredient"/>.addTooltip("<string/>");
+    </function>
+    <function name="Add shift tooltip">
+        <slot type="ingredient"/>.addShiftTooltip("<string/>");
+    </function>
+    <function name="Remove loot">
+        vanilla.loot.removeChestLoot(<string/>,<slot type="item" wildcard="true" metawildcard="true"/>);
+    </function>
+    <function name="Add loot">
+        vanilla.loot.addChestLoot(<string/>,<slot type="item"/>.weight(<number max="100"/>));
+    </function>
+    <function name="Add loot, with random stacksize">
+        vanilla.loot.addChestLoot(<string/>,<slot type="item"/>.weight(<number max="100"/>),<number max="64"/>,<number
+            max="64"/>);
+    </function>
+    <function name="Remove seeds">
+        vanilla.seeds.removeSeed(<slot type="ingredient"/>);
+    </function>
+    <function name="Add seeds">
+        vanilla.seeds.addSeed(<slot type="item"/>.weight(<number max="100"/>));
+    </function>
+</MTRM>
