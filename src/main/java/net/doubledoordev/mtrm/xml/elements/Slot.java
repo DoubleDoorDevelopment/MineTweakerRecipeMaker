@@ -1,7 +1,12 @@
-package net.doubledoordev.mtrm.xml;
+package net.doubledoordev.mtrm.xml.elements;
 
+import net.doubledoordev.mtrm.client.elements.GuiElement;
+import net.doubledoordev.mtrm.xml.XmlParser;
 import org.w3c.dom.Element;
 
+/**
+ * @author Dries007
+ */
 @SuppressWarnings("WeakerAccess")
 public class Slot implements XmlParser.IStringObject
 {
@@ -26,6 +31,18 @@ public class Slot implements XmlParser.IStringObject
     public String toString()
     {
         return "Slot{type=" + type + ", optional=" + optional + ", wildcard=" + wildcard + ", metawildcard=" + metawildcard + ", stacksize=" + stacksize + ", oredict=" + oredict + '}';
+    }
+
+    @Override
+    public String toHumanText()
+    {
+        return "<slot>";
+    }
+
+    @Override
+    public GuiElement toGuiElement(GuiElement.GuiElementCallback callback)
+    {
+        return null;
     }
 
     public enum Type

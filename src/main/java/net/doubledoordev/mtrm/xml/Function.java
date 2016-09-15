@@ -5,15 +5,20 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * @author Dries007
+ */
 @SuppressWarnings("WeakerAccess")
 public class Function implements XmlParser.IElementObject
 {
     public final String name;
+    public final int weight;
     public final ImmutableList<Object> parts;
 
-    public Function(Element element)
+    public Function(Element element) throws Exception
     {
         name = element.getAttribute("name");
+        weight = Integer.parseInt(element.getAttribute("weight"));
 
         ImmutableList.Builder<Object> parts = ImmutableList.builder();
         NodeList list = element.getChildNodes();
@@ -60,7 +65,7 @@ public class Function implements XmlParser.IElementObject
     public static class InstanceCreator implements XmlParser.IInstanceCreator<Function>
     {
         @Override
-        public Function create(Element node)
+        public Function create(Element node) throws Exception
         {
             return new Function(node);
         }

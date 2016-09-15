@@ -1,4 +1,4 @@
-package net.doubledoordev.mtrm.gui.client.elements;
+package net.doubledoordev.mtrm.client.parts;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.FontRenderer;
@@ -7,6 +7,9 @@ import net.minecraft.client.gui.GuiTextField;
 
 import java.util.List;
 
+/**
+ * @author Dries007
+ */
 public class GuiMultilineTextField extends GuiTextField
 {
     private final FontRenderer fr;

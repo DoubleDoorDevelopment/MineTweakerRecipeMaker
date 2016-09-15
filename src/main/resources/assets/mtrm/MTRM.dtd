@@ -1,28 +1,42 @@
+<!-- MTRM config spec v1.0 - 13 sept 2016 - Dries007 -->
 <!ELEMENT MTRM (function|modifier)*>
-        <!ELEMENT function (#PCDATA|slot|array|oredict|number|nbt|string)*>
-        <!ATTLIST function name CDATA #REQUIRED>
-        <!ELEMENT modifier (#PCDATA|slot|array|oredict|number|nbt|string)*>
-        <!ATTLIST modifier name CDATA #REQUIRED>
-        <!ATTLIST modifier in (item|ingredient) "item">
-        <!ATTLIST modifier out (item|ingredient) "ingredient">
+    <!ATTLIST MTRM name CDATA #REQUIRED><!-- Name for this file. (human readable) -->
+    <!ATTLIST MTRM version CDATA #REQUIRED><!-- Internal version. Currently unused. -->
+    <!ATTLIST MTRM protocol CDATA #FIXED "1.0"><!-- Protocol version. -->
+    <!ELEMENT function (#PCDATA|slot|array|oredict|number|nbt|string)*><!-- A function call (can technically be anything is displayText in a script file) -->
+        <!ATTLIST function name CDATA #REQUIRED><!-- Name for this function. (human readable) -->
+        <!ATTLIST function weight CDATA #REQUIRED><!-- Position in the script file. Please use increments of 10! (see vanilla.xml) -->
+    <!ELEMENT modifier (#PCDATA|slot|array|oredict|number|nbt|string)*><!-- A modifier that can be applies to an object -->
+        <!ATTLIST modifier name CDATA #REQUIRED><!-- Name for this modifier. (human readable) -->
+        <!ATTLIST modifier in (item|ingredient) "item"><!-- The input type -->
+        <!ATTLIST modifier out (item|ingredient) "ingredient"><!-- The output type -->
 
-        <!-- Reset indentation because these are used by multiple upper elements -->
-        <!ELEMENT array (array|slot|oredict|number|nbt|string)>
-        <!ATTLIST array min CDATA "1">
-        <!ATTLIST array max CDATA #REQUIRED>
-        <!ELEMENT nbt EMPTY>
-        <!ELEMENT string EMPTY>
-        <!ELEMENT number EMPTY>
-        <!ATTLIST number stepsize CDATA "1">
-        <!ATTLIST number min CDATA "0">
-        <!ATTLIST number max CDATA #IMPLIED>
-        <!ELEMENT oredict EMPTY> <!-- For when it MUST be an ore dictionary entry-->
-        <!ATTLIST oredict optional (true|false) "false">
-        <!ELEMENT slot EMPTY>
+    <!-- Reset indentation because these are used by multiple upper elements -->
+    <!ELEMENT array (array|slot|oredict|number|nbt|string)> <!-- An array of ...-->
+        <!ATTLIST array optional (true|false) "false"><!-- true if value can be null -->
+        <!ATTLIST array min CDATA "1"><!-- Minimum amount of objects -->
+        <!ATTLIST array max CDATA #REQUIRED><!-- Maximum amount of objects -->
+    <!ELEMENT nbt EMPTY><!-- A NBT string -->
+        <!ATTLIST nbt optional (true|false) "false"><!-- true if value can be null -->
+    <!ELEMENT string EMPTY><!-- A normal displayText string -->
+        <!ATTLIST string optional (true|false) "false"><!-- true if value can be null -->
+    <!ELEMENT number EMPTY><!-- A number -->
+        <!ATTLIST number optional (true|false) "false"><!-- true if value can be null -->
+        <!ATTLIST number stepsize CDATA "1"><!-- Determines max resolution. Set to 0 for manual entry -->
+        <!ATTLIST number min CDATA "0"><!-- Minimum value -->
+        <!ATTLIST number max CDATA #IMPLIED><!-- Maximal value -->
+        <!ATTLIST number default CDATA #IMPLIED><!-- Default value, if not present, minimum will be used -->
+    <!ELEMENT oredict EMPTY><!-- For when object MUST be an ore dictionary entry -->
+        <!ATTLIST oredict optional (true|false) "false"><!-- true if value can be null -->
+    <!ELEMENT slot EMPTY><!-- A (Item or Ingredient) Slot -->
+        <!--
+            To understand the difference between items and ingredients, read the MineTweaker wiki.
+            TLDR: Outputs are items and inputs are often ingredients. Items are a subset of Ingredients.
+        -->
         <!ATTLIST slot type (item|ingredient) #REQUIRED>
-        <!-- DEFAULTS                                           Item    Ingredient  -->
-        <!ATTLIST slot optional (true|false) #IMPLIED><!--      false   true        -->
-        <!ATTLIST slot wildcard (true|false) #IMPLIED><!--      false   true        -->
-        <!ATTLIST slot metawildcard (true|false) #IMPLIED><!--  false   true        -->
-        <!ATTLIST slot stacksize (true|false) #IMPLIED><!--     true    false       -->
-        <!ATTLIST slot oredict (true|false) #IMPLIED><!--       false   true        -->
+        <!-- DEFAULTS                                           Item    Ingredient  Explanation -->
+        <!ATTLIST slot optional (true|false) #IMPLIED><!--      false   true        true if value can be null -->
+        <!ATTLIST slot wildcard (true|false) #IMPLIED><!--      false   true        true if value can be a wildcard '<*>' -->
+        <!ATTLIST slot metawildcard (true|false) #IMPLIED><!--  false   true        true if metadata can be a wildcard '<mod:item:*>'-->
+        <!ATTLIST slot stacksize (true|false) #IMPLIED><!--     true    false       true if there can be a stacksize here -->
+        <!ATTLIST slot oredict (true|false) #IMPLIED><!--       false   true        true if oredict is optional here. If oredict is requred, use oredict instead of slot-->

@@ -15,7 +15,9 @@ This mod has no relation with MineTweaker itself, and MineTweaker is not a depen
 How to use
 ----------
 
-Command: "/mtrm [type]" or "/MineTweakerRecipeMaker [type]"
+Command: "/mtrm" or "/minetweakerrecipemaker".
+
+Use tab complete to find out what types are available locally, or use no type to get a list.
 
 Download
 --------

@@ -1,7 +1,12 @@
-package net.doubledoordev.mtrm.xml;
+package net.doubledoordev.mtrm.xml.elements;
 
+import net.doubledoordev.mtrm.client.elements.GuiElement;
+import net.doubledoordev.mtrm.xml.XmlParser;
 import org.w3c.dom.Element;
 
+/**
+ * @author Dries007
+ */
 @SuppressWarnings("WeakerAccess")
 public class Oredict implements XmlParser.IStringObject
 {
@@ -16,6 +21,18 @@ public class Oredict implements XmlParser.IStringObject
     public String toString()
     {
         return "Oredict{optional=" + optional + '}';
+    }
+
+    @Override
+    public String toHumanText()
+    {
+        return "<oredict>";
+    }
+
+    @Override
+    public GuiElement toGuiElement(GuiElement.GuiElementCallback callback)
+    {
+        return null;
     }
 
     public static class InstanceCreator implements XmlParser.IInstanceCreator<Oredict>

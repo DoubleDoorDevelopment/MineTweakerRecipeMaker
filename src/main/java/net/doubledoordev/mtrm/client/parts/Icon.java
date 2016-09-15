@@ -1,7 +1,10 @@
-package net.doubledoordev.mtrm.gui.client.elements;
+package net.doubledoordev.mtrm.client.parts;
 
 import net.minecraft.util.ResourceLocation;
 
+/**
+ * @author Dries007
+ */
 public enum Icon
 {
     CHECK, CROSS, PLUS, MINUS, LEFT, RIGHT, UP, DOWN, LEFT_ALT(LEFT), RIGHT_ALT(RIGHT), UP_ALT(UP), DOWN_ALT(DOWN), COPY, PASTE, NEW, PENCIL,

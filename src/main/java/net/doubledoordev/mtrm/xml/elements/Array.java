@@ -1,20 +1,27 @@
-package net.doubledoordev.mtrm.xml;
+package net.doubledoordev.mtrm.xml.elements;
 
+import net.doubledoordev.mtrm.client.elements.GuiElement;
+import net.doubledoordev.mtrm.xml.XmlParser;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * @author Dries007
+ */
 @SuppressWarnings("WeakerAccess")
 public class Array implements XmlParser.IStringObject
 {
     public final XmlParser.IStringObject component;
     public final int min;
     public final int max;
+    public final boolean optional;
 
-    public Array(Element node)
+    public Array(Element node) throws Exception
     {
         min = node.hasAttribute("min") ? Integer.parseInt(node.getAttribute("min")) : 1;
         max = Integer.parseInt(node.getAttribute("max"));
+        optional = node.hasAttribute("optional") && Boolean.parseBoolean(node.getAttribute("optional"));
 
         XmlParser.IStringObject component = null;
 
@@ -38,10 +45,22 @@ public class Array implements XmlParser.IStringObject
         this.component = component;
     }
 
+    @Override
+    public String toHumanText()
+    {
+        return "[" + component.toHumanText() + ']';
+    }
+
+    @Override
+    public GuiElement toGuiElement(GuiElement.GuiElementCallback callback)
+    {
+        return null;
+    }
+
     public static class InstanceCreator implements XmlParser.IInstanceCreator<Array>
     {
         @Override
-        public Array create(Element node)
+        public Array create(Element node) throws Exception
         {
             return new Array(node);
         }

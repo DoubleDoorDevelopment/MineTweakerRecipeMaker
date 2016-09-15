@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE MTRM SYSTEM "MTRM.dtd">
+<!-- Vanilla specs - 13 sept 2016 - Dries007 -->
+<MTRM version="1" name="Vanilla" protocol="1.0">
+    <modifier name="Any damage" out="item">.anyDamage()</modifier>
+    <modifier name="With damage" out="item">.anyDamage(<number/>)</modifier>
+    <modifier name="With NBT tag" out="item">.withTag(<nbt/>)</modifier>
+    <modifier name="Only with NBT tag">.onlyWithTag(<nbt/>)</modifier>
+    <modifier name="Only damaged">.onlyDamaged()</modifier>
+    <modifier name="Only with n damage">.onlyDamaged(<number/>)</modifier>
+    <modifier name="Only with &lt;n damage">.onlyDamageAtLeast(<number/>)</modifier>
+    <modifier name="Only with &gt;n damage">.onlyDamageAtMost(<number/>)</modifier>
+    <modifier name="Only with &gt;n and &lt;m damage">.onlyDamageBetween(<number/>,<number/>)</modifier>
+    <modifier name="Reusable item (no damage)" in="ingredient">.reuse()</modifier>
+    <modifier name="Reusable item (1 damage)" in="ingredient">.transformDamage()</modifier>
+    <modifier name="Reusable item (custom damage)" in="ingredient">.transformDamage(<number/>)</modifier>
+    <modifier name="Replace item" in="ingredient">.transformReplace(<slot type="item"/>)</modifier>
+    <modifier name="Don't return item" in="ingredient">.noReturn()</modifier>
+    <modifier name="Return item in inventory" in="ingredient">.giveBack(<slot type="item"/>)</modifier>
+
+    <!-- Misc item manipulations. Weight 250 -->
+    <function name="Set displayName" weight="250">
+        <slot type="item" stacksize="false"/>.displayName=<string/>;
+    </function>
+    <function name="Add tooltip" weight="250">
+        <slot type="ingredient"/>.addTooltip(<string/>);
+    </function>
+    <function name="Add shift tooltip" weight="250">
+        <slot type="ingredient"/>.addShiftTooltip(<string/>);
+    </function>
+
+    <!-- Ore dictionary. Weight 500 -->
+    <function name="Add to ore dictionary entry" weight="500">
+        <oredict/>.add(<slot type="item" metawildcard="true"/>);
+    </function>
+    <function name="Remove from ore dictionary entry" weight="500">
+        <oredict/>.add(<slot type="item" metawildcard="true"/>);
+    </function>
+    <function name="Mirror ore dictionary to another" weight="500">
+        <oredict/>.mirror(<oredict/>);
+    </function>
+    <function name="Add all ore dictionary entries to another" weight="500">
+        <oredict/>.addAll(<oredict/>);
+    </function>
+
+    <!-- Crafting -->
+    <!-- Removing recipes. Weight 1000 -->
+    <function name="Remove all crafting" weight="1000">
+        recipes.remove(<slot type="item"/>);
+    </function>
+    <function name="Remove all shapeless crafting" weight="1000">
+        recipes.removeShapeless(<slot type="item"/>);
+    </function>
+    <function name="Remove all shaped crafting" weight="1000">
+        recipes.removeShaped(<slot type="item"/>);
+    </function>
+    <function name="Remove shapeless crafting" weight="1000">
+        recipes.removeShapeless(<slot type="item"/>,<array max="9"><slot type="ingredient"/></array>);
+    </function>
+    <function name="Remove shaped crafting" weight="1000">
+        recipes.removeShaped(<slot type="item"/>,<array max="3"><array max="3"><slot type="ingredient"/></array></array>);
+    </function>
+    <!-- Adding recipes. weight 1500 -->
+    <function name="Add shapeless" weight="1500">
+        recipes.addShapeless(<slot type="item"/>,<array max="9"><slot type="ingredient"/></array>);
+    </function>
+    <function name="Add shaped" weight="1500">
+        recipes.addShaped(<slot type="item"/>,<array max="3"><array max="3"><slot type="ingredient"/></array></array>);
+    </function>
+
+    <!-- Furnaces -->
+    <!-- Removing recipes. Weight 2000 -->
+    <function name="Remove furnace recipe" weight="2000">
+        furnace.remove(<slot type="ingredient"/>);
+    </function>
+    <function name="Remove specific furnace recipe" weight="2000">
+        furnace.remove(<slot type="item"/>,<slot type="ingredient"/>);
+    </function>
+    <!-- Adding recipes. Weight 2500 -->
+    <function name="Add furnace recipe" weight="2500">
+        furnace.addRecipe(<slot type="item"/>,<slot type="ingredient"/>);
+    </function>
+    <function name="Add furnace recipe with XP" weight="2500">
+        furnace.addRecipe(<slot type="item"/>,<slot type="ingredient"/>,<number stepsize="0.01"/>);
+    </function>
+    <!-- Misc. Weight 2750 -->
+    <function name="Set fuel" weight="2750">
+        furnace.setFuel(<slot type="ingredient" stacksize="false"/>,<number/>);
+    </function>
+
+    <!-- Loot tables IDK if / how they work in MT 1.9/1.10, so I'm leavening them out for now;
+    <function name="Remove loot">
+        vanilla.loot.removeChestLoot(<string/>,<slot type="item" wildcard="true" metawildcard="true"/>);
+    </function>
+    <function name="Add loot">
+        vanilla.loot.addChestLoot(<string/>,<slot type="item"/>.weight(<number max="100"/>));
+    </function>
+    <function name="Add loot, with random stacksize">
+        vanilla.loot.addChestLoot(<string/>,<slot type="item"/>.weight(<number max="100"/>),<number max="64"/>,<number max="64"/>);
+    </function>
+    <function name="Remove seeds">
+        vanilla.seeds.removeSeed(<slot type="ingredient"/>);
+    </function>
+    <function name="Add seeds">
+        vanilla.seeds.addSeed(<slot type="item"/>.weight(<number max="100"/>));
+    </function>-->
+</MTRM>

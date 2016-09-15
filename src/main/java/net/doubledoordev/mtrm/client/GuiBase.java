@@ -1,7 +1,7 @@
-package net.doubledoordev.mtrm.gui.client;
+package net.doubledoordev.mtrm.client;
 
-import net.doubledoordev.mtrm.gui.client.elements.GuiIconButton;
-import net.doubledoordev.mtrm.gui.client.elements.Icon;
+import net.doubledoordev.mtrm.client.parts.GuiIconButton;
+import net.doubledoordev.mtrm.client.parts.Icon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -17,10 +17,14 @@ import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 
+/**
+ * @author Dries007
+ */
 @SuppressWarnings("WeakerAccess")
 public abstract class GuiBase extends GuiScreen
 {
     protected static final ResourceLocation BACKGROUND = new ResourceLocation("mtrm:gui/base.png");
+    protected static final int ID_CANCEL = 0;
     protected static final int BTN_OK = 1;
     protected static final int BTN_CANCEL = 2;
 
@@ -78,6 +82,7 @@ public abstract class GuiBase extends GuiScreen
         if (isScrolling)
         {
             currentScroll = MathHelper.clamp_float((float) (mouseY - 6 - top) / (bottom - top - 16), 0.0F, 1.0F);
+            this.scrolled();
         }
 
         this.mc.getTextureManager().bindTexture(BACKGROUND);
@@ -122,19 +127,29 @@ public abstract class GuiBase extends GuiScreen
 
             currentScroll = (currentScroll - i / 75.0f);
             currentScroll = MathHelper.clamp_float(currentScroll, 0.0F, 1.0F);
+            this.scrolled();
         }
     }
 
+    protected abstract void scrolled();
+
     protected void confirmExit()
     {
-        this.mc.displayGuiScreen(new GuiYesNo(this, "Are you sure you want to leave?", "Changes won't be saved!", 0));
+        this.mc.displayGuiScreen(new GuiYesNo(this, "Are you sure you want to leave?", "Changes won't be saved!", ID_CANCEL));
     }
 
     @Override
     public void confirmClicked(boolean result, int id)
     {
-        if (result) exit();
-        else this.mc.displayGuiScreen(this);
+        switch (id)
+        {
+            case ID_CANCEL:
+                if (result) exit();
+                else this.mc.displayGuiScreen(this);
+                break;
+            default:
+                super.confirmClicked(result, id);
+        }
     }
 
     @Override

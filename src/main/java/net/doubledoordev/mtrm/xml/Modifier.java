@@ -1,10 +1,14 @@
 package net.doubledoordev.mtrm.xml;
 
 import com.google.common.collect.ImmutableList;
+import net.doubledoordev.mtrm.xml.elements.Slot;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * @author Dries007
+ */
 @SuppressWarnings("WeakerAccess")
 public class Modifier implements XmlParser.IElementObject
 {
@@ -13,7 +17,7 @@ public class Modifier implements XmlParser.IElementObject
     public final Slot.Type out;
     public final ImmutableList<Object> parts;
 
-    public Modifier(Element element)
+    public Modifier(Element element) throws Exception
     {
         name = element.getAttribute("name");
         in = element.hasAttribute("in") ? Slot.Type.valueOf(element.getAttribute("in").toUpperCase()) : Slot.Type.ITEM;
@@ -66,7 +70,7 @@ public class Modifier implements XmlParser.IElementObject
     public static class InstanceCreator implements XmlParser.IInstanceCreator<Modifier>
     {
         @Override
-        public Modifier create(Element node)
+        public Modifier create(Element node) throws Exception
         {
             return new Modifier(node);
         }
