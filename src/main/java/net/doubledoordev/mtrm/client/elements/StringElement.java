@@ -1,7 +1,7 @@
 package net.doubledoordev.mtrm.client.elements;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 
 /**
  * @author Dries007
@@ -22,7 +22,7 @@ public class StringElement extends GuiElement
         super(callback, false);
         this.string = string;
         this.color = color;
-        fontRendererObj = Minecraft.getMinecraft().fontRendererObj;
+        fontRendererObj = mc.fontRendererObj;
     }
 
     @Override
@@ -47,6 +47,7 @@ public class StringElement extends GuiElement
     @Override
     public void draw(int mouseX, int mouseY, float partialTicks)
     {
+        GlStateManager.enableAlpha();
         fontRendererObj.drawSplitString(string, posX, posY + 1, maxWidth, color);
     }
 }

@@ -1,4 +1,4 @@
-//package net.doubledoordev.mtrm.network;
+//package old.network;
 //
 //import io.netty.buffer.ByteBuf;
 //import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -8,14 +8,12 @@
 ///**
 // * @author Dries007
 // */
-//public class MessageOpenGui implements IMessage
+//public class MessageReload implements IMessage
 //{
-//    public MessageOpenGui()
+//    public MessageReload()
 //    {
 //
 //    }
-//
-//
 //
 //    @Override
 //    public void fromBytes(ByteBuf buf)
@@ -29,10 +27,10 @@
 //
 //    }
 //
-//    public static class Handler implements IMessageHandler<MessageOpenGui, IMessage>
+//    public static class Handler implements IMessageHandler<MessageReload, IMessage>
 //    {
 //        @Override
-//        public IMessage onMessage(MessageOpenGui message, MessageContext ctx)
+//        public IMessage onMessage(MessageReload message, MessageContext ctx)
 //        {
 //            if (ctx.side.isClient())
 //            {

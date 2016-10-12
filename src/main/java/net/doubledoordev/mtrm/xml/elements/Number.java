@@ -1,6 +1,7 @@
 package net.doubledoordev.mtrm.xml.elements;
 
 import net.doubledoordev.mtrm.client.elements.GuiElement;
+import net.doubledoordev.mtrm.client.elements.NumberElement;
 import net.doubledoordev.mtrm.xml.XmlParser;
 import org.w3c.dom.Element;
 
@@ -17,8 +18,8 @@ public class Number implements XmlParser.IStringObject
 
     public Number(Element node)
     {
-        min = node.hasAttribute("min") ? Double.parseDouble(node.getAttribute("min")) : 1;
-        max = node.hasAttribute("max") ? Double.parseDouble(node.getAttribute("max")) : Integer.MAX_VALUE;
+        min = node.hasAttribute("min") ? Double.parseDouble(node.getAttribute("min")) : 0;
+        max = node.hasAttribute("max") ? Double.parseDouble(node.getAttribute("max")) : Short.MAX_VALUE;
         stepsize = node.hasAttribute("stepsize") ? Double.parseDouble(node.getAttribute("stepsize")) : 1;
         optional = node.hasAttribute("optional") && Boolean.parseBoolean(node.getAttribute("optional"));
     }
@@ -38,7 +39,7 @@ public class Number implements XmlParser.IStringObject
     @Override
     public GuiElement toGuiElement(GuiElement.GuiElementCallback callback)
     {
-        return null;
+        return new NumberElement(callback, optional, min, max, stepsize);
     }
 
     public static class InstanceCreator implements XmlParser.IInstanceCreator<Number>

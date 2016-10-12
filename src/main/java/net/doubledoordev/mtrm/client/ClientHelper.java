@@ -10,14 +10,19 @@ import java.util.List;
  */
 public class ClientHelper
 {
-    public static final int[] BTN_COLORS = {0x505050, 0xAAAAAA, 0xBDC6FF};
-    public static final int[] TEXT_COLORS = {0xA0A0A0, 0xE0E0E0, 0xFFFFA0};
+    public static final int[] BTN_COLORS = {0x505050, 0xAAAAAA, 0xBDC6FF, 0xFF9090};
+    public static final int[] TEXT_COLORS = {0xA0A0A0, 0xE0E0E0, 0xFFFFA0, 0xF0F0F0};
 
     private ClientHelper()
     {
     }
 
     public static List<String> split(FontRenderer renderer, String text, int width)
+    {
+        return split(renderer, text, width, Integer.MAX_VALUE);
+    }
+
+    public static List<String> split(FontRenderer renderer, String text, int width, int lineLimit)
     {
         if (text.length() == 0) return new ArrayList<>();
         List<String> list = new ArrayList<>();
@@ -29,11 +34,13 @@ public class ClientHelper
             if (c == '\n')
             {
                 list.add(line.substring(0, line.length() - 1));
+                if (list.size() >= lineLimit--) return list;
                 line = new StringBuilder();
             }
             else if (w >= width)
             {
                 list.add(line.substring(0, line.length() - 1) + '→');
+                if (list.size() >= lineLimit--) return list;
                 line = new StringBuilder();
                 line.append(c);
             }

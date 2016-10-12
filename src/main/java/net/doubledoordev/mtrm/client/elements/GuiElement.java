@@ -1,12 +1,17 @@
 package net.doubledoordev.mtrm.client.elements;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+
+import javax.annotation.Nullable;
 
 /**
  * @author Dries007
  */
 public abstract class GuiElement extends Gui
 {
+    protected final Minecraft mc;
+
     protected int width;
     protected int height;
     protected int posX;
@@ -25,6 +30,7 @@ public abstract class GuiElement extends Gui
     {
         this.callback = callback;
         this.optional = optional;
+        mc = Minecraft.getMinecraft();
     }
 
     public abstract void initGui();
@@ -98,7 +104,7 @@ public abstract class GuiElement extends Gui
     {
         if (isOver(mouseX, mouseY))
         {
-            setFocus(true);
+            if (mouseButton == 0) setFocus(true);
             onClickOn(mouseX, mouseY, mouseButton);
             if (!isEnabled()) setFocus(false);
         }
@@ -178,8 +184,8 @@ public abstract class GuiElement extends Gui
 
     public interface GuiElementCallback
     {
-        void resizeCallback(GuiElement element);
+        void resizeCallback(@Nullable GuiElement element);
 
-        void updateButtons(GuiElement element);
+        void updateButtons(@Nullable GuiElement element);
     }
 }

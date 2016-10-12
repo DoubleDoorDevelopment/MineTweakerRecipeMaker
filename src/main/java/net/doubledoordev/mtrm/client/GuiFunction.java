@@ -1,157 +1,56 @@
 package net.doubledoordev.mtrm.client;
 
-import com.google.common.collect.ImmutableList;
 import net.doubledoordev.mtrm.MineTweakerRecipeMaker;
 import net.doubledoordev.mtrm.client.elements.GuiElement;
 import net.doubledoordev.mtrm.client.elements.StringElement;
 import net.doubledoordev.mtrm.xml.Function;
 import net.doubledoordev.mtrm.xml.XmlParser;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiYesNo;
-
-import java.io.IOException;
-import java.util.List;
+import net.minecraft.client.gui.inventory.GuiContainer;
 
 /**
  * @author Dries007
  */
-public class GuiFunction extends GuiBase implements GuiElement.GuiElementCallback
+public class GuiFunction extends GuiListBase implements GuiElement.GuiElementCallback
 {
     protected static final int ID_SAVE = 10;
-    private final GuiMain parent;
+    private final GuiContainer parent;
     private final Function function;
-    private final List<GuiElement> guiElements;
     private final String genericText;
     private String currentText;
-    private int listLeft;
-    private int listRight;
-    private int listSizeX;
-    private int listTop;
-    private int listBottom;
-    private int listSizeY;
-    private int listInternalHeight;
 
-    public GuiFunction(GuiMain parent, Function function)
+    public GuiFunction(GuiContainer parent, Function function)
     {
+        super(parent.inventorySlots);
         this.parent = parent;
         this.function = function;
         StringBuilder textBuilder = new StringBuilder();
-        ImmutableList.Builder<GuiElement> elementBuilder = ImmutableList.builder();
         for (Object obj : function.parts)
         {
             if (obj instanceof String)
             {
                 textBuilder.append(obj);
-                elementBuilder.add(new StringElement(this, (String) obj));
+                guiElements.add(new StringElement(this, (String) obj));
             }
             else
             {
                 XmlParser.IStringObject sObj = (XmlParser.IStringObject) obj;
                 textBuilder.append(sObj.toHumanText());
                 GuiElement e = sObj.toGuiElement(this);
-                if (e != null) elementBuilder.add(e);
-                else elementBuilder.add(new StringElement(this, sObj.toHumanText(), 0xFF0000));
+                if (e != null) guiElements.add(e);
+                else guiElements.add(new StringElement(this, sObj.toHumanText(), 0xFF0000));
             }
+            textBuilder.append(' ');
         }
-        guiElements = elementBuilder.build();
         genericText = textBuilder.toString();
         currentText = "";
-    }
-
-    @Override
-    protected void scrolled()
-    {
-        positionElements(null);
-    }
-
-    private void positionElements(GuiElement e)
-    {
-        listInternalHeight = 0;
-        for (GuiElement obj : guiElements)
-        {
-            listInternalHeight += obj.getHeight() + 1;
-        }
-
-        GuiElement tooBig = null;
-
-        int posY = listTop - (int)(listInternalHeight * currentScroll);
-        for (GuiElement obj : guiElements)
-        {
-            obj.setPosition(listLeft, posY);
-            int elementHeight = obj.getHeight();
-            if (obj.isFocused() && elementHeight > listSizeY)
-            {
-                tooBig = obj;
-                currentScroll = 0;
-                obj.setPosition(listLeft, listTop + listSizeY / 2 - elementHeight / 2);
-                obj.setVisible(true);
-                break;
-            }
-            else if (posY < listTop)
-            {
-                obj.setVisible(false);
-            }
-            else if (posY + elementHeight > listBottom)
-            {
-                if (obj.isFocused())
-                {
-                    tooBig = obj;
-                    obj.setVisible(true);
-                    currentScroll = 0;
-                    obj.setPosition(listLeft, listTop);
-                }
-                else
-                {
-                    obj.setVisible(false);
-                }
-            }
-            else
-            {
-                obj.setVisible(true);
-            }
-            posY += elementHeight + 1;
-        }
-
-        if (tooBig != null)
-        {
-            for (GuiElement obj : guiElements)
-            {
-                if (obj != tooBig) obj.setVisible(false);
-            }
-        }
-    }
-
-    @Override
-    public void resizeCallback(GuiElement element)
-    {
-        positionElements(element);
     }
 
     @Override
     public void initGui()
     {
         super.initGui();
-
-        listLeft = guiLeft + 5;
-        listRight = guiLeft + xSize - 30;
-        listSizeX = listRight - listLeft;
-
-        listTop = guiTop + 5;
-        listBottom = guiTop + ySize - 8;
-        listSizeY = listBottom - listTop;
-
-        for (GuiElement obj : guiElements) obj.initGui(listSizeX);
-
-        positionElements(null);
         changes = true;
-        btnOk.enabled = true;
-    }
-
-    @Override
-    public void updateButtons(GuiElement element)
-    {
-        btnOk.enabled = true;
-        for (GuiElement obj : guiElements) btnOk.enabled &= obj.isValid();
     }
 
     @Override
@@ -159,76 +58,30 @@ public class GuiFunction extends GuiBase implements GuiElement.GuiElementCallbac
     {
         super.updateScreen();
         StringBuilder sb = new StringBuilder();
-        for (GuiElement obj : guiElements)
-        {
-            obj.update();
-            sb.append(obj.save());
-        }
+        for (GuiElement obj : guiElements) sb.append(obj.save()).append(' ');
         currentText = sb.toString();
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
     {
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
 
         fontRendererObj.drawString(function.name, guiLeft + xSize / 2 - fontRendererObj.getStringWidth(function.name) / 2, guiTop - 10, 0xFFFFFF);
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
+    {
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 
         // todo: remove
         // debug start
-        fontRendererObj.drawString("Generic", guiLeft + xSize + 25, guiTop - 100, 0xFF5050);
-        fontRendererObj.drawSplitString(genericText, guiLeft + xSize + 25, guiTop - 90, 200, 0xFFFFFF);
-        fontRendererObj.drawString("Current", guiLeft + xSize + 25, guiTop + 100, 0xFF5050);
-        fontRendererObj.drawSplitString(currentText, guiLeft + xSize + 25, guiTop + 110, 200, 0xFFFFFF);
-//        drawHorizontalLine(mouseX - 10, mouseX + 10, mouseY, 0xFFAAAAAA);
-//        drawVerticalLine(mouseX, mouseY - 10, mouseY + 10, 0xFFAAAAAA);
-//        drawRect(listLeft, listTop, listRight, listBottom, 0x50FFFFFF);
+        fontRendererObj.drawString("Generic", -200, -100, 0xFF5050);
+        fontRendererObj.drawSplitString(genericText, -200, -90, 200, 0xFFFFFF);
+        fontRendererObj.drawString("Current", xSize + 25, -100, 0xFF5050);
+        fontRendererObj.drawSplitString(currentText, xSize + 25, -90, 200, 0xFFFFFF);
         // debug end
-
-        for (GuiElement obj : guiElements) if (obj.isVisible()) obj.draw(mouseX, mouseY, partialTicks);
-        for (GuiElement obj : guiElements) if (obj.isVisible() && obj.isOver(mouseX, mouseY)) obj.drawHover(mouseX, mouseY, width, height);
-
-        // todo: remove
-        // debug start
-//        fontRendererObj.drawString("Debug info", guiLeft - 200, guiTop - 110, 0xFF5050);
-//        for (int i = 0; i < guiElements.size(); i++)
-//        {
-//            GuiElement obj = guiElements.get(i);
-//            StringBuilder sb = new StringBuilder("Element ").append(i).append(' ');
-//            sb.append(obj.isEnabled()).append(' ');
-//            sb.append(obj.isVisible()).append(' ');
-//            sb.append(obj.isFocused()).append(' ');
-//
-//            fontRendererObj.drawString(sb.toString(), guiLeft - 200, guiTop - 100 + i * fontRendererObj.FONT_HEIGHT, 0xFFFFFF);
-//        }
-        // debug end
-    }
-
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
-    {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        for (GuiElement element : guiElements) if (element.isVisible()) element.onClick(mouseX, mouseY, mouseButton);
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode)
-    {
-        boolean handled = false;
-        for (GuiElement element : guiElements) if (element.isFocused()) handled |= element.keyTyped(typedChar, keyCode);
-        if (!handled) super.keyTyped(typedChar, keyCode);
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException
-    {
-        super.actionPerformed(button);
-    }
-
-    @Override
-    public void drawBackground(int tint)
-    {
-        super.drawBackground(tint);
     }
 
     @Override
@@ -266,11 +119,5 @@ public class GuiFunction extends GuiBase implements GuiElement.GuiElementCallbac
         // add author + timestamp
         MineTweakerRecipeMaker.log().info("Saved: {}", currentText);
         this.mc.displayGuiScreen(parent);
-    }
-
-    @Override
-    protected boolean needsScrolling()
-    {
-        return listInternalHeight > listSizeY;
     }
 }

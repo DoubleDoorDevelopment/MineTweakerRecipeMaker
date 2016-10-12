@@ -33,7 +33,7 @@ public class ManualString implements XmlParser.IStringObject
     @Override
     public GuiElement toGuiElement(GuiElement.GuiElementCallback callback)
     {
-        return new StringInputElement(callback, optional, "String");
+        return new StringInputElement(callback, optional, "Empty String");
     }
 
     public static class InstanceCreator implements XmlParser.IInstanceCreator<ManualString>

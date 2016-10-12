@@ -35,9 +35,6 @@ public class GuiIconButton extends GuiButton
     {
         if (!visible) return;
 
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-//
-
         hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
         // 0 = disabled, 1 = normal, 2 = hover
         int state = getHoverState(hovered);

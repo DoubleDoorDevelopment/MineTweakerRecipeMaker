@@ -24,7 +24,7 @@
         <!ATTLIST number optional (true|false) "false"><!-- true if value can be null -->
         <!ATTLIST number stepsize CDATA "1"><!-- Determines max resolution. Set to 0 for manual entry -->
         <!ATTLIST number min CDATA "0"><!-- Minimum value -->
-        <!ATTLIST number max CDATA #IMPLIED><!-- Maximal value -->
+        <!ATTLIST number max CDATA #IMPLIED><!-- Maximal value. Default is 32767 (max short) -->
         <!ATTLIST number default CDATA #IMPLIED><!-- Default value, if not present, minimum will be used -->
     <!ELEMENT oredict EMPTY><!-- For when object MUST be an ore dictionary entry -->
         <!ATTLIST oredict optional (true|false) "false"><!-- true if value can be null -->

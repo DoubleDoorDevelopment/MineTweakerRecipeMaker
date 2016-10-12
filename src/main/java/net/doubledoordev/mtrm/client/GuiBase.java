@@ -2,14 +2,11 @@ package net.doubledoordev.mtrm.client;
 
 import net.doubledoordev.mtrm.client.parts.GuiIconButton;
 import net.doubledoordev.mtrm.client.parts.Icon;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiYesNo;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Keyboard;
@@ -20,16 +17,18 @@ import java.io.IOException;
 /**
  * @author Dries007
  */
-@SuppressWarnings("WeakerAccess")
-public abstract class GuiBase extends GuiScreen
+public abstract class GuiBase extends GuiContainer
 {
-    protected static final ResourceLocation BACKGROUND = new ResourceLocation("mtrm:gui/base.png");
+    public static final ResourceLocation BASE = new ResourceLocation("mtrm:gui/base.png");
+    public static final ResourceLocation INVENTORY = new ResourceLocation("mtrm:gui/inventory.png");
     protected static final int ID_CANCEL = 0;
     protected static final int BTN_OK = 1;
     protected static final int BTN_CANCEL = 2;
 
-    protected final int xSize = 256;
-    protected final int ySize = 200;
+    {
+        xSize = 256;
+        ySize = 200;
+    }
 
     //0 = top, 1 = bottom
     protected float currentScroll;
@@ -43,23 +42,29 @@ public abstract class GuiBase extends GuiScreen
     protected int guiLeft;
     protected int guiTop;
 
+    public GuiBase(Container inventorySlotsIn)
+    {
+        super(inventorySlotsIn);
+
+    }
+
     protected abstract void exit();
 
     protected abstract void ok();
 
     protected abstract boolean needsScrolling();
 
-    @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
-    {
-        if (mc == null)
-        {
-            mc = Minecraft.getMinecraft();
-            fontRendererObj = mc.fontRendererObj;
-        }
+    protected abstract void scrolled();
 
-        mc.getTextureManager().bindTexture(BACKGROUND);
-        drawDefaultBackground();
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+    {
+        mc.getTextureManager().bindTexture(INVENTORY);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        // 88 = 176/2 = width of inventory gui
+        drawTexturedModalRect(guiLeft + xSize/2 - 88, guiTop + ySize + 9, 0, 0, 176, 90);
+
+        mc.getTextureManager().bindTexture(BASE);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
@@ -85,10 +90,14 @@ public abstract class GuiBase extends GuiScreen
             this.scrolled();
         }
 
-        this.mc.getTextureManager().bindTexture(BACKGROUND);
+        mc.getTextureManager().bindTexture(BASE);
         drawTexturedModalRect(left, top + (int) ((bottom - top - 15) * currentScroll), this.needsScrolling() ? 0 : 12, 241, 12, 15);
+    }
 
-        super.drawScreen(mouseX, mouseY, partialTicks);
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
+    {
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }
 
     @Override
@@ -109,12 +118,6 @@ public abstract class GuiBase extends GuiScreen
     }
 
     @Override
-    public boolean doesGuiPauseGame()
-    {
-        return false;
-    }
-
-    @Override
     public void handleMouseInput() throws IOException
     {
         super.handleMouseInput();
@@ -131,11 +134,9 @@ public abstract class GuiBase extends GuiScreen
         }
     }
 
-    protected abstract void scrolled();
-
     protected void confirmExit()
     {
-        this.mc.displayGuiScreen(new GuiYesNo(this, "Are you sure you want to leave?", "Changes won't be saved!", ID_CANCEL));
+        mc.displayGuiScreen(new GuiYesNo(this, "Are you sure you want to leave?", "Changes won't be saved!", ID_CANCEL));
     }
 
     @Override
@@ -145,7 +146,7 @@ public abstract class GuiBase extends GuiScreen
         {
             case ID_CANCEL:
                 if (result) exit();
-                else this.mc.displayGuiScreen(this);
+                else mc.displayGuiScreen(this);
                 break;
             default:
                 super.confirmClicked(result, id);
@@ -177,22 +178,5 @@ public abstract class GuiBase extends GuiScreen
                 else exit();
                 break;
         }
-    }
-
-    @Override
-    public void drawBackground(int tint)
-    {
-        drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 250, 250, 250, 250);
-        GlStateManager.disableLighting();
-        GlStateManager.disableFog();
-        Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer vertexbuffer = tessellator.getBuffer();
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        vertexbuffer.pos(0.0D, (double) height, 0.0D).tex(0.0D, (double) ((float) height / 32.0F + (float) tint)).color(64, 64, 64, 255).endVertex();
-        vertexbuffer.pos((double) width, (double) height, 0.0D).tex((double) ((float) width / 32.0F), (double) ((float) height / 32.0F + (float) tint)).color(64, 64, 64, 255).endVertex();
-        vertexbuffer.pos((double) width, 0.0D, 0.0D).tex((double) ((float) width / 32.0F), (double) tint).color(64, 64, 64, 255).endVertex();
-        vertexbuffer.pos(0.0D, 0.0D, 0.0D).tex(0.0D, (double) tint).color(64, 64, 64, 255).endVertex();
-        tessellator.draw();
     }
 }

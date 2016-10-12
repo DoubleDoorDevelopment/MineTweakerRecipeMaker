@@ -1,6 +1,7 @@
 package net.doubledoordev.mtrm.xml.elements;
 
 import net.doubledoordev.mtrm.client.elements.GuiElement;
+import net.doubledoordev.mtrm.client.elements.NbtElement;
 import net.doubledoordev.mtrm.xml.XmlParser;
 import org.w3c.dom.Element;
 
@@ -32,7 +33,7 @@ public class Nbt implements XmlParser.IStringObject
     @Override
     public GuiElement toGuiElement(GuiElement.GuiElementCallback callback)
     {
-        return null;
+        return new NbtElement(callback, optional);
     }
 
     public static class InstanceCreator implements XmlParser.IInstanceCreator<Nbt>

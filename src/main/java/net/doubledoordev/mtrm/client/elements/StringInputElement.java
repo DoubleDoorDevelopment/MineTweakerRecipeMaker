@@ -1,13 +1,13 @@
 package net.doubledoordev.mtrm.client.elements;
 
-import com.google.common.collect.ImmutableList;
-import net.doubledoordev.mtrm.Helper;
+import com.mojang.realmsclient.gui.ChatFormatting;
 import net.doubledoordev.mtrm.client.ClientHelper;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.client.config.GuiUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.lwjgl.input.Keyboard;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @author Dries007
@@ -24,13 +24,19 @@ public class StringInputElement extends ButtonElement
         this.emptyDisplayText = displayText;
     }
 
+    @Override
+    protected void onClick()
+    {
+        // actuation happens on focus here.
+    }
+
     private void calcHeight()
     {
         if (!isFocused())
         {
             height = defaultHeight;
-            if (text.isEmpty()) displayText = emptyDisplayText;
-            else displayText = Helper.truncate(text.replace('\n', '↲'), 30);
+            if (text.isEmpty()) setDisplayText(emptyDisplayText);
+            else setDisplayText(text.replace('\n', '↲'));
         }
         else height = (Math.max(ClientHelper.split(fontRendererObj, text, width).size(), 1) * fontRendererObj.FONT_HEIGHT + 6);
         resizeCallback();
@@ -75,21 +81,17 @@ public class StringInputElement extends ButtonElement
     }
 
     @Override
-    protected void onClickOn(int mouseX, int mouseY, int mouseButton)
+    public ArrayList<String> getHoverLines()
     {
-        super.onClickOn(mouseX, mouseY, mouseButton);
-    }
-
-    @Override
-    public void drawHover(int mouseX, int mouseY, int maxWidth, int maxHeight)
-    {
-        if (isFocused()) return;
-        super.drawHover(mouseX, mouseY, maxWidth, maxHeight);
-        if (text.length() > 30)
+        if (isFocused()) return new ArrayList<>();
+        ArrayList<String> list = super.getHoverLines();
+        if (!enabled) list.add(ChatFormatting.RED + "Disabled!");
+        else
         {
-            List<String> lines = ImmutableList.<String>builder().add(enabled ? "Current value:" : "Disabled!").add(text.split("\n")).build();
-            GuiUtils.drawHoveringText(lines, mouseX, mouseY, maxWidth, maxHeight, this.maxWidth, fontRendererObj);
+            list.add(ChatFormatting.AQUA + "Current value:");
+            Collections.addAll(list, text.split("\n"));
         }
+        return list;
     }
 
     @Override
@@ -128,6 +130,6 @@ public class StringInputElement extends ButtonElement
     @Override
     public String save()
     {
-        return enabled ? '"' + text + '"' : null;
+        return enabled ? '"' + StringEscapeUtils.escapeJava(text) + '"' : null;
     }
 }

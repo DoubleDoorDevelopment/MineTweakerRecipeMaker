@@ -1,6 +1,7 @@
 package net.doubledoordev.mtrm.xml.elements;
 
 import net.doubledoordev.mtrm.client.elements.GuiElement;
+import net.doubledoordev.mtrm.client.elements.SlotElement;
 import net.doubledoordev.mtrm.xml.XmlParser;
 import org.w3c.dom.Element;
 
@@ -42,7 +43,7 @@ public class Slot implements XmlParser.IStringObject
     @Override
     public GuiElement toGuiElement(GuiElement.GuiElementCallback callback)
     {
-        return null;
+        return new SlotElement(callback, optional, type, wildcard, metawildcard, oredict, stacksize);
     }
 
     public enum Type
