@@ -1,19 +1,20 @@
 package net.doubledoordev.mtrm.gui;
 
-import cpw.mods.fml.client.config.GuiButtonExt;
-import cpw.mods.fml.client.config.GuiCheckBox;
-import cpw.mods.fml.client.config.GuiSlider;
-import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.doubledoordev.mtrm.MineTweakerRecipeMaker;
 import net.doubledoordev.mtrm.network.MessageSend;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.config.GuiButtonExt;
+import net.minecraftforge.fml.client.config.GuiCheckBox;
+import net.minecraftforge.fml.client.config.GuiSlider;
+import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import org.lwjgl.opengl.GL11;
 
@@ -125,7 +126,7 @@ public class MTRMGui extends GuiContainer
         boolean metaWildcard = this.metaWildcard.isChecked();
         boolean oreDict = this.oreDict.isChecked();
         if (stack == null) return "null";
-        String stackName = GameData.getItemRegistry().getNameForObject(stack.getItem());
+        String stackName = GameData.getItemRegistry().getNameForObject(stack.getItem()).toString();
         StringBuilder builder = new StringBuilder("<");
         if (oreDict)
         {
@@ -185,7 +186,7 @@ public class MTRMGui extends GuiContainer
         int wOffset = this.width / 2 - 200;
         int hOffset = this.height / 2 - 110;
 
-        tokenTxt = new GuiTextField(this.fontRendererObj, wOffset, hOffset - 25, 220 + this.xSize, 20);
+        tokenTxt = new GuiTextField(0, this.fontRendererObj, wOffset, hOffset - 25, 220 + this.xSize, 20);
         tokenTxt.setMaxStringLength(Integer.MAX_VALUE);
 
         this.buttonList.add(matchAll = new GuiCheckBox(ID_OPTION_MATCHALL, wOffset, hOffset += 10, "Match not empty (*)", false));
@@ -288,7 +289,8 @@ public class MTRMGui extends GuiContainer
         labels.put(key, values);
     }
 
-    protected void handleMouseClick(Slot slot, int slotNumber, int mouseBtn, int modifier)
+    @Override
+    protected void handleMouseClick(Slot slot, int slotNumber, int mouseBtn, ClickType modifier)
     {
         super.handleMouseClick(slot, slotNumber, mouseBtn, modifier);
         if (slot != null && slotNumber >= 0 && slotNumber <= 9)
@@ -505,19 +507,19 @@ public class MTRMGui extends GuiContainer
         if (!visible) container.putStackInSlot(RETURN_SLOT_ID, null);
     }
 
-    protected void keyTyped(char p_73869_1_, int p_73869_2_)
-    {
-        if (!this.tokenTxt.textboxKeyTyped(p_73869_1_, p_73869_2_))
-        {
-            super.keyTyped(p_73869_1_, p_73869_2_);
-        }
-    }
+//    protected void keyTyped(char p_73869_1_, int p_73869_2_)
+//    {
+//        if (!this.tokenTxt.textboxKeyTyped(p_73869_1_, p_73869_2_))
+//        {
+//            super.keyTyped(p_73869_1_, p_73869_2_);
+//        }
+//    }
 
-    protected void mouseClicked(int p_73864_1_, int p_73864_2_, int p_73864_3_)
-    {
-        super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
-        this.tokenTxt.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
-    }
+//    protected void mouseClicked(int p_73864_1_, int p_73864_2_, int p_73864_3_)
+//    {
+//        super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
+//        this.tokenTxt.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
+//    }
 
     /**
      * Draw the foreground layer for the GuiContainer (everything in front of the items)

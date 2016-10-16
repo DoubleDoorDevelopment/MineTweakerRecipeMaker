@@ -5,6 +5,8 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nullable;
+
 /**
  * @author Dries007
  */
@@ -48,8 +50,9 @@ public class MTRMContainer extends Container
 
     }
 
+    @Nullable
     @Override
-    public ItemStack slotClick(int i, int mousebtn, int modifier, EntityPlayer player)
+    public ItemStack slotClick(int i, int mousebtn, ClickType clickTypeIn, EntityPlayer player)
     {
         ItemStack stack = null;
         if ((i >= 0 && i <= 9) || i == RETURN_SLOT_ID) // Fake slots
@@ -111,7 +114,7 @@ public class MTRMContainer extends Container
         }
         else
         {
-            stack = super.slotClick(i, mousebtn, modifier, player);
+            stack = super.slotClick(i, mousebtn, clickTypeIn, player);
         }
         return stack;
     }
@@ -125,8 +128,8 @@ public class MTRMContainer extends Container
         return null;
     }
 
-    public boolean func_94530_a(ItemStack p_94530_1_, Slot p_94530_2_)
-    {
-        return p_94530_2_.inventory != craftResult && p_94530_2_.inventory != returnSlot && super.func_94530_a(p_94530_1_, p_94530_2_);
-    }
+//    public boolean func_94530_a(ItemStack p_94530_1_, Slot p_94530_2_)
+//    {
+//        return p_94530_2_.inventory != craftResult && p_94530_2_.inventory != returnSlot && super.func_94530_a(p_94530_1_, p_94530_2_);
+//    }
 }
