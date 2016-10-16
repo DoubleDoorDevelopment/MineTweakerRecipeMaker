@@ -1,82 +1,88 @@
+
+// For those who want the bleeding edge
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+/*
+// for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
+plugins {
+    id "net.minecraftforge.gradle.forge" version "2.0.2"
+}
+*/
+
+repositories {
+    ivy {
+        name "CraftTweaker3"
+        artifactPattern "http://www.blamejared.com/content/[module]-[classifier]-Full-[revision].[ext]"
     }
 }
 
-import groovy.json.*
+// define the properties file
+ext.configFile = file "project.properties"
 
-configurations {
-    compile
-    deployJars
+configFile.withReader {
+    // read config.  it shall from now on be referenced as simply config or as project.config
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.config = new ConfigSlurper().parse prop
 }
 
-apply plugin: "forge"
-apply plugin: "maven"
+version = "${config.mod_version}"
+if (hasProperty('appendBuildNumber')) {
+    version = version + "-" + appendBuildNumber.toString()
+}
 
-group = "net.doubledoordev.mtrm"
-version = "1.1.0"
-
-targetCompatibility = 1.7
-sourceCompatibility = 1.7
-
-archivesBaseName = 'MineTweakerRecipeMaker'
-def githuborg = 'DoubleDoorDevelopment'
-def description = 'MineTweaker Recipe Maker'
+group = "${config.group_id}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "${config.mod_name}-${config.minecraft_version}"
 
 minecraft {
-    version = "1.7.10-10.13.1.1224"
-    runDir = "jars"
+    version = "${config.forge_version}"
+    runDir = "run"
+    mappings = "snapshot_20160518"
+    replace '@VERSION@', project.version
 }
 
-if (System.getenv().BUILD_NUMBER != null) version += "." + System.getenv().BUILD_NUMBER
+dependencies {
 
-processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        include '**/*.info'
-        expand 'version':project.version, 'mcversion':project.minecraft.version, 'modid':project.archivesBaseName, 'githuborg':githuborg, 'description':description
-    }
 
-    from(sourceSets.main.resources.srcDirs) {
-        exclude '**/*.info'
-    }
 }
 
-task sourcesJar(type: Jar) {
-    from "LICENSE.txt"
-    from sourceSets.main.allSource
-    classifier = 'src'
-    appendix = project.minecraft.version
-}
+processResources
+        {
+            // this will ensure that this task is redone when the versions change.
+            inputs.property "version", project.version
+            inputs.property "mcversion", project.minecraft.version
+
+            // replace stuff in mcmod.info, nothing else
+            from(sourceSets.main.resources.srcDirs) {
+                include 'mcmod.info'
+
+                // replace version and mcversion
+                expand 'version':project.version, 'mcversion':project.minecraft.version
+            }
+
+            // copy everything else, thats not the mcmod.info
+            from(sourceSets.main.resources.srcDirs) {
+                exclude 'mcmod.info'
+            }
+        }
 
 task deobfJar(type: Jar) {
-    from "LICENSE.txt"
     from sourceSets.main.output
-    from (sourceSets.main.allSource.srcDirs) {
-        include '**/*.java'
-    }
-	classifier = 'dev'
-    appendix = project.minecraft.version
+    classifier = 'dev'
 }
 
-jar {
-    from "LICENSE.txt"
-    appendix = project.minecraft.version
-}
-
-artifacts {
-	archives jar
-    archives sourcesJar
-    archives deobfJar
-}
+build.dependsOn deobfJar
