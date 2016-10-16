@@ -1,4 +1,3 @@
-.gradle
 build
 jars
 out
@@ -8,7 +7,4 @@ out
 .idea
 *.txt
 *.json
-gradlew
-gradlew.bat
-gradle
 eclipse
