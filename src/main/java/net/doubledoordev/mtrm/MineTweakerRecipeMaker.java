@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
@@ -26,6 +27,12 @@ public class MineTweakerRecipeMaker
     public static MineTweakerRecipeMaker instance;
 
     private SimpleNetworkWrapper snw;
+    private Logger logger;
+
+    public static Logger getLogger()
+    {
+        return instance.logger;
+    }
 
     public static SimpleNetworkWrapper getSnw()
     {
@@ -35,6 +42,8 @@ public class MineTweakerRecipeMaker
     @Mod.EventHandler
     public void init(FMLPreInitializationEvent event)
     {
+        logger = event.getModLog();
+
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new MTRMGuiHandler());
 
         int id = 0;

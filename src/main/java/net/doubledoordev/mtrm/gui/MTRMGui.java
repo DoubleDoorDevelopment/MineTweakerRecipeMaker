@@ -14,8 +14,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 import net.minecraftforge.fml.client.config.GuiSlider;
-import net.minecraftforge.fml.common.registry.GameData;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import org.lwjgl.opengl.GL11;
 
@@ -127,7 +125,7 @@ public class MTRMGui extends GuiContainer
         boolean metaWildcard = this.metaWildcard.isChecked();
         boolean oreDict = this.oreDict.isChecked();
         if (stack == null) return "null";
-        String stackName = GameData.getItemRegistry().getNameForObject(stack.getItem()).toString();
+        String stackName = stack.getItem().getRegistryName().toString();
         StringBuilder builder = new StringBuilder("<");
         if (oreDict)
         {
@@ -160,7 +158,7 @@ public class MTRMGui extends GuiContainer
             if (giveBack.isChecked()) builder.append(".giveBack(<");
             else if (transformReplace.isChecked()) builder.append(".transformReplace(<");
 
-            builder.append(GameData.getItemRegistry().getNameForObject(returnStack.getItem()));
+            builder.append(returnStack.getItem().getRegistryName());
             if (returnStack.getItemDamage() != 0) builder.append(':').append(returnStack.getItemDamage());
             builder.append('>');
             if (returnStack.stackSize > 1) builder.append(" * ").append(returnStack.stackSize);

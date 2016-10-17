@@ -1,6 +1,7 @@
 package net.doubledoordev.mtrm.network;
 
 import io.netty.buffer.ByteBuf;
+import net.doubledoordev.mtrm.MineTweakerRecipeMaker;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -10,7 +11,6 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -127,8 +127,17 @@ public class MessageSend implements IMessage
         }
         if (data[0] == null) return new MessageResponse(MessageResponse.Status.NO_OUT);
         if (!remove && noIngredients) return new MessageResponse(MessageResponse.Status.NO_IN);
-        File file = new File("scripts/MineTweakerRecipeMaker/scripts/", "Crafting.zs");
+        File oldFile = new File("scripts/MineTweakerRecipeMaker/scripts/", "Crafting.zs");
+        File file = new File("scripts", MineTweakerRecipeMaker.NAME + ".zs");
         if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
+        try
+        {
+            if (oldFile.exists()) FileUtils.moveFile(oldFile, file);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
         if (!file.exists())
         {
             try
@@ -192,9 +201,9 @@ public class MessageSend implements IMessage
             {
                 Class.forName("minetweaker.MineTweakerImplementationAPI").getDeclaredMethod("reload").invoke(null);
             }
-            catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored)
+            catch (Exception e)
             {
-
+                MineTweakerRecipeMaker.getLogger().info("Auto reload failed. Nothing to be worried about, just annoying.", e);
             }
         }
         catch (IOException e)
