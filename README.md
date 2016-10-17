@@ -1,6 +1,8 @@
 MineTweakerRecipeMaker
 ======================
 
+**Huge thanks to gigabit101 for the port of v1.2 to 1.10.2!**
+
 Oh god, its is finally here!<br>
 The one and only **MineTweakerRecipeMaker**!
 

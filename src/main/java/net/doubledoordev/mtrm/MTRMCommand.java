@@ -21,7 +21,7 @@ public class MTRMCommand extends CommandBase
     }
 
     @Override
-    public List getCommandAliases()
+    public List<String> getCommandAliases()
     {
         return Arrays.asList("mtrm");
     }
@@ -29,7 +29,7 @@ public class MTRMCommand extends CommandBase
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
-        if (sender instanceof EntityPlayer) ((EntityPlayer) sender).openGui(MineTweakerRecipeMaker.instance, 0, sender.getEntityWorld(), 0, 0, 0);
+        getCommandSenderAsPlayer(sender).openGui(MineTweakerRecipeMaker.instance, 0, sender.getEntityWorld(), 0, 0, 0);
     }
 
     @Override
@@ -38,10 +38,9 @@ public class MTRMCommand extends CommandBase
         return "Step 4: PROFIT?";
     }
 
-//    @Override
-//    public boolean canCommandSenderUseCommand(ICommandSender p_71519_1_)
-//    {
-//        return MinecraftServer.getServer().isSinglePlayer() || super.canCommandSenderUseCommand(p_71519_1_);
-//    }
-
+    @Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender)
+    {
+        return server.isSinglePlayer() || super.checkPermission(server, sender);
+    }
 }

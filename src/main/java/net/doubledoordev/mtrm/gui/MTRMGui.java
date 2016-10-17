@@ -8,6 +8,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
@@ -440,7 +441,8 @@ public class MTRMGui extends GuiContainer
             {
                 int meta = m.group(3) != null ? Integer.parseInt(m.group(3)) : 0;
                 int size = m.group(4) != null ? Integer.parseInt(m.group(4)) : 1;
-                container.getSlot(RETURN_SLOT_ID).putStack(new ItemStack(GameRegistry.findItem(m.group(1), m.group(2)), size, meta));
+                Item i = Item.REGISTRY.getObject(new ResourceLocation(m.group(1), m.group(2)));
+                if (i != null) container.getSlot(RETURN_SLOT_ID).putStack(new ItemStack(i, size, meta));
             }
         }
 

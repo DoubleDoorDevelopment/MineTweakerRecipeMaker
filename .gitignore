@@ -1,5 +1,4 @@
 build
-jars
 out
 *.iml
 *.ipr
@@ -8,3 +7,4 @@ out
 *.txt
 *.json
 eclipse
+run/

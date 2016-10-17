@@ -1,4 +1,3 @@
-
 // For those who want the bleeding edge
 buildscript {
     repositories {
@@ -12,58 +11,86 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
+
+import groovy.json.*
 apply plugin: 'net.minecraftforge.gradle.forge'
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-/*
-// for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
-plugins {
-    id "net.minecraftforge.gradle.forge" version "2.0.2"
-}
-*/
+version = "1.2.0"
+if (System.getenv().BUILD_NUMBER != null) version += "." + System.getenv().BUILD_NUMBER
 
-repositories {
-    ivy {
-        name "CraftTweaker3"
-        artifactPattern "http://www.blamejared.com/content/[module]-[classifier]-Full-[revision].[ext]"
-    }
-}
-
-// define the properties file
-ext.configFile = file "project.properties"
-
-configFile.withReader {
-    // read config.  it shall from now on be referenced as simply config or as project.config
-    def prop = new Properties()
-    prop.load(it)
-    project.ext.config = new ConfigSlurper().parse prop
-}
-
-version = "${config.mod_version}"
-if (hasProperty('appendBuildNumber')) {
-    version = version + "-" + appendBuildNumber.toString()
-}
-
-group = "${config.group_id}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "${config.mod_name}-${config.minecraft_version}"
+group = "net.doubledoordev.mtrm"
+archivesBaseName = "MineTweakerRecipeMaker"
 
 minecraft {
-    version = "${config.forge_version}"
+    version = "1.10.2-12.18.2.2099"
     runDir = "run"
-    mappings = "snapshot_20160518"
-    replace '@VERSION@', project.version
+    mappings = "snapshot_20161013"
 }
 
-dependencies {
+processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
 
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include "mcmod.info"
 
+        // replace version and mcversion
+        expand "version": project.version, "mcversion": project.minecraft.version
+    }
+
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "mcmod.info"
+    }
+
+    doLast {
+        def updateFile = new File(project.archivesBaseName + '.json')
+        def json;
+        if (updateFile.exists()) {
+            json = new JsonSlurper().parseText(updateFile.getText())
+        }
+        else {
+            def builder = new JsonBuilder()
+            json = builder(
+                    homepage: "http://doubledoordev.net/",
+                    promos: new HashMap<>()
+            )
+        }
+        def outStream = new ByteArrayOutputStream()
+        def result = exec {
+            executable = 'git'
+            args = [ 'log', '-n', '1', "--format='%B'"]
+            standardOutput = outStream
+        }
+        def fullLog = outStream.toString().replaceAll("^\\s*'\\s*|\\s*'\\s*\$", "").replaceAll("[\\r\\n]+", "\n")
+
+        json['promos'][project.minecraft.version + '-latest'] = project.version
+        json['promos'][project.minecraft.version + '-recomended'] = project.version
+        if (!json.containsKey(project.minecraft.version)) json.put(project.minecraft.version, new HashMap<>())
+        def version = json[project.minecraft.version]
+        version.put(project.version, fullLog)
+        updateFile.write JsonOutput.prettyPrint(JsonOutput.toJson(json))
+    }
 }
-
-
-task deobfJar(type: Jar) {
+task deobfJar(type: Jar, dependsOn: 'jar') {
     from sourceSets.main.output
-    classifier = 'dev'
+    classifier "dev"
+    appendix = project.minecraft.version
 }
-
-build.dependsOn deobfJar
+sourceJar {
+    exclude("com/**")
+    classifier "src"
+    appendix = project.minecraft.version
+}
+jar {
+    exclude("com/**")
+    appendix = project.minecraft.version
+}
+artifacts {
+    archives deobfJar
+}
