@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * @author Dries007
  */
-@Mod(modid = MineTweakerRecipeMaker.MODID, name = MineTweakerRecipeMaker.NAME)
+@Mod(modid = MineTweakerRecipeMaker.MODID, name = MineTweakerRecipeMaker.NAME, acceptableRemoteVersions = "*")
 public class MineTweakerRecipeMaker
 {
     public static final String MODID = "mtrm";
