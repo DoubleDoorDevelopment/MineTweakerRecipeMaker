@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author Dries007
  */
-@Mod(modid = MineTweakerRecipeMaker.MODID, name = MineTweakerRecipeMaker.NAME)
+@Mod(modid = MineTweakerRecipeMaker.MODID, name = MineTweakerRecipeMaker.NAME, acceptableRemoteVersions = "*")
 public class MineTweakerRecipeMaker
 {
     public static final String MODID = "MTRM";
@@ -47,11 +47,5 @@ public class MineTweakerRecipeMaker
     public void serverStarting(FMLServerStartingEvent event)
     {
         event.registerServerCommand(new MTRMCommand());
-    }
-
-    @NetworkCheckHandler
-    public boolean networkCheckHandler(Map<String, String> map, Side side)
-    {
-        return side.isClient() || map.containsKey(MODID);
     }
 }
