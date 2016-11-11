@@ -1,6 +1,4 @@
-.gradle
 build
-jars
 out
 *.iml
 *.ipr
@@ -8,7 +6,5 @@ out
 .idea
 *.txt
 *.json
-gradlew
-gradlew.bat
-gradle
 eclipse
+run/

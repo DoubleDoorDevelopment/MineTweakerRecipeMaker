@@ -1,21 +1,20 @@
-{
-  "modListVersion": 2,
-  "modList": [{
-    "modid": "${modid}",
-    "name": "${modid}",
-    "description": "${description}",
+[
+  {
+    "modid": "mtrm",
+    "name": "MineTweakerRecipeMaker",
+    "description": "MineTweaker Recipe Maker",
     "version": "${version}",
     "mcversion": "${mcversion}",
-    "url": "https://github.com/${githuborg}/${modid}",
-    "updateUrl": "",
-    "authorList": [ "Dries007", "Doubledoor team" ],
+    "url": "http://doubledoordev.net/",
+    "updateUrl": "http://doubledoordev.net/MineTweakerRecipeMaker.json",
+    "authorList": [
+      "Dries007",
+      "DoubleDoorDevelopment",
+      "Gigabit_101"
+    ],
     "credits": "",
     "logoFile": "",
     "screenshots": [],
-    "parent": "",
-    "requiredMods": [ "Forge" ],
-    "dependencies": [ ],
-    "dependants": [ ],
-    "useDependencyInformation": true
-  }]
-}
+    "dependencies": []
+  }
+]

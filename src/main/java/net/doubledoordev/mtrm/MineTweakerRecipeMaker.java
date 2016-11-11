@@ -1,15 +1,16 @@
 package net.doubledoordev.mtrm;
 
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.NetworkCheckHandler;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.relauncher.Side;
 import net.doubledoordev.mtrm.gui.MTRMGuiHandler;
 import net.doubledoordev.mtrm.network.MessageResponse;
 import net.doubledoordev.mtrm.network.MessageSend;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.network.NetworkCheckHandler;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
@@ -19,13 +20,19 @@ import java.util.Map;
 @Mod(modid = MineTweakerRecipeMaker.MODID, name = MineTweakerRecipeMaker.NAME, acceptableRemoteVersions = "*")
 public class MineTweakerRecipeMaker
 {
-    public static final String MODID = "MTRM";
+    public static final String MODID = "mtrm";
     public static final String NAME = "MineTweakerRecipeMaker";
 
     @Mod.Instance(MODID)
     public static MineTweakerRecipeMaker instance;
 
     private SimpleNetworkWrapper snw;
+    private Logger logger;
+
+    public static Logger getLogger()
+    {
+        return instance.logger;
+    }
 
     public static SimpleNetworkWrapper getSnw()
     {
@@ -35,6 +42,8 @@ public class MineTweakerRecipeMaker
     @Mod.EventHandler
     public void init(FMLPreInitializationEvent event)
     {
+        logger = event.getModLog();
+
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new MTRMGuiHandler());
 
         int id = 0;

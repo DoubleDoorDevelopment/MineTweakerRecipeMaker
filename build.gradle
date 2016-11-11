@@ -1,82 +1,96 @@
+// For those who want the bleeding edge
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
 
 import groovy.json.*
+apply plugin: 'net.minecraftforge.gradle.forge'
 
-configurations {
-    compile
-    deployJars
-}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
-apply plugin: "forge"
-apply plugin: "maven"
-
-group = "net.doubledoordev.mtrm"
-version = "1.1.0"
-
-targetCompatibility = 1.7
-sourceCompatibility = 1.7
-
-archivesBaseName = 'MineTweakerRecipeMaker'
-def githuborg = 'DoubleDoorDevelopment'
-def description = 'MineTweaker Recipe Maker'
-
-minecraft {
-    version = "1.7.10-10.13.1.1224"
-    runDir = "jars"
-}
-
+version = "1.2.1"
 if (System.getenv().BUILD_NUMBER != null) version += "." + System.getenv().BUILD_NUMBER
 
+group = "net.doubledoordev.mtrm"
+archivesBaseName = "MineTweakerRecipeMaker"
+
+minecraft {
+    version = "1.10.2-12.18.2.2099"
+    runDir = "run"
+    mappings = "snapshot_20161013"
+}
+
 processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
-        include '**/*.info'
-        expand 'version':project.version, 'mcversion':project.minecraft.version, 'modid':project.archivesBaseName, 'githuborg':githuborg, 'description':description
+        include "mcmod.info"
+
+        // replace version and mcversion
+        expand "version": project.version, "mcversion": project.minecraft.version
     }
 
+    // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
-        exclude '**/*.info'
+        exclude "mcmod.info"
+    }
+
+    doLast {
+        def updateFile = new File(project.archivesBaseName + '.json')
+        def json;
+        if (updateFile.exists()) {
+            json = new JsonSlurper().parseText(updateFile.getText())
+        }
+        else {
+            def builder = new JsonBuilder()
+            json = builder(
+                    homepage: "http://doubledoordev.net/",
+                    promos: new HashMap<>()
+            )
+        }
+        def outStream = new ByteArrayOutputStream()
+        def result = exec {
+            executable = 'git'
+            args = [ 'log', '-n', '1', "--format='%B'"]
+            standardOutput = outStream
+        }
+        def fullLog = outStream.toString().replaceAll("^\\s*'\\s*|\\s*'\\s*\$", "").replaceAll("[\\r\\n]+", "\n")
+
+        json['promos'][project.minecraft.version + '-latest'] = project.version
+        json['promos'][project.minecraft.version + '-recomended'] = project.version
+        if (!json.containsKey(project.minecraft.version)) json.put(project.minecraft.version, new HashMap<>())
+        def version = json[project.minecraft.version]
+        version.put(project.version, fullLog)
+        updateFile.write JsonOutput.prettyPrint(JsonOutput.toJson(json))
     }
 }
-
-task sourcesJar(type: Jar) {
-    from "LICENSE.txt"
-    from sourceSets.main.allSource
-    classifier = 'src'
-    appendix = project.minecraft.version
-}
-
-task deobfJar(type: Jar) {
-    from "LICENSE.txt"
+task deobfJar(type: Jar, dependsOn: 'jar') {
     from sourceSets.main.output
-    from (sourceSets.main.allSource.srcDirs) {
-        include '**/*.java'
-    }
-	classifier = 'dev'
+    classifier "dev"
     appendix = project.minecraft.version
 }
-
+sourceJar {
+    exclude("com/**")
+    classifier "src"
+    appendix = project.minecraft.version
+}
 jar {
-    from "LICENSE.txt"
+    exclude("com/**")
     appendix = project.minecraft.version
 }
-
 artifacts {
-	archives jar
-    archives sourcesJar
     archives deobfJar
 }
