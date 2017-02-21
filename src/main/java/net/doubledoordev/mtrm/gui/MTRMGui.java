@@ -1,6 +1,5 @@
 package net.doubledoordev.mtrm.gui;
 
-import com.sun.istack.internal.NotNull;
 import net.doubledoordev.mtrm.MineTweakerRecipeMaker;
 import net.doubledoordev.mtrm.network.MessageResponse;
 import net.doubledoordev.mtrm.network.MessageSend;
@@ -123,7 +122,7 @@ public class MTRMGui extends GuiContainer
         this.container = container;
     }
 
-    public String getStackToken(boolean nextOreDict, @NotNull ItemStack stack)
+    public String getStackToken(boolean nextOreDict, ItemStack stack)
     {
         boolean metaWildcard = this.metaWildcard.isChecked();
         boolean oreDict = this.oreDict.isChecked();
