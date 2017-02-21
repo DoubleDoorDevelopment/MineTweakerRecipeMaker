@@ -14,13 +14,13 @@ import java.util.List;
 public class MTRMCommand extends CommandBase
 {
     @Override
-    public String getCommandName()
+    public String getName()
     {
         return "minetweakerrecipemaker";
     }
 
     @Override
-    public List<String> getCommandAliases()
+    public List<String> getAliases()
     {
         return Arrays.asList("mtrm");
     }
@@ -32,7 +32,7 @@ public class MTRMCommand extends CommandBase
     }
 
     @Override
-    public String getCommandUsage(ICommandSender p_71518_1_)
+    public String getUsage(ICommandSender p_71518_1_)
     {
         return "Step 4: PROFIT?";
     }

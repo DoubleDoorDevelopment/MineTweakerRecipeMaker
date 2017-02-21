@@ -6,13 +6,10 @@ import net.doubledoordev.mtrm.network.MessageSend;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Map;
 
 /**
  * @author Dries007

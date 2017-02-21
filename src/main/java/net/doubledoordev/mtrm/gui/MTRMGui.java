@@ -1,6 +1,8 @@
 package net.doubledoordev.mtrm.gui;
 
+import com.sun.istack.internal.NotNull;
 import net.doubledoordev.mtrm.MineTweakerRecipeMaker;
+import net.doubledoordev.mtrm.network.MessageResponse;
 import net.doubledoordev.mtrm.network.MessageSend;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -111,6 +113,7 @@ public class MTRMGui extends GuiContainer
     private MessageSend messageSend = new MessageSend();
     private int editing = -1;
     private int lastOreId = 0;
+    private MessageResponse.Status status;
     private String errorMessage;
 
     public MTRMGui(MTRMContainer container)
@@ -120,11 +123,15 @@ public class MTRMGui extends GuiContainer
         this.container = container;
     }
 
-    public String getStackToken(boolean nextOreDict, ItemStack stack)
+    public String getStackToken(boolean nextOreDict, @NotNull ItemStack stack)
     {
         boolean metaWildcard = this.metaWildcard.isChecked();
         boolean oreDict = this.oreDict.isChecked();
-        if (stack == null) return "null";
+        if (stack.isEmpty()) return "null";
+        if (stack.getItem().getRegistryName() == null)
+        {
+            throw new IllegalStateException("PLEASE REPORT: Item not empty, but getRegistryName null? Debug info: " + stack);
+        }
         String stackName = stack.getItem().getRegistryName().toString();
         StringBuilder builder = new StringBuilder("<");
         if (oreDict)
@@ -141,7 +148,7 @@ public class MTRMGui extends GuiContainer
         builder.append(stackName);
         if (!oreDict && (metaWildcard || stack.getItemDamage() != 0)) builder.append(':').append(metaWildcard || stack.getItemDamage() == OreDictionary.WILDCARD_VALUE ? "*" : stack.getItemDamage());
         builder.append('>');
-        if (stack.stackSize > 1) builder.append(" * ").append(stack.stackSize);
+        if (stack.getCount() > 1) builder.append(" * ").append(stack.getCount());
         if (anyDamage.isChecked()) builder.append(".anyDamage()");
         if (onlyDamaged.isChecked()) builder.append(".onlyDamaged()");
         if (withDamage.isChecked()) builder.append(".withDamage(").append(sliders.get(withDamage)[0].getValueInt()).append(')');
@@ -161,7 +168,7 @@ public class MTRMGui extends GuiContainer
             builder.append(returnStack.getItem().getRegistryName());
             if (returnStack.getItemDamage() != 0) builder.append(':').append(returnStack.getItemDamage());
             builder.append('>');
-            if (returnStack.stackSize > 1) builder.append(" * ").append(returnStack.stackSize);
+            if (returnStack.getCount() > 1) builder.append(" * ").append(returnStack.getCount());
             builder.append(')');
         }
         return builder.toString();
@@ -185,7 +192,7 @@ public class MTRMGui extends GuiContainer
         int wOffset = this.width / 2 - 200;
         int hOffset = this.height / 2 - 110;
 
-        tokenTxt = new GuiTextField(0, this.fontRendererObj, wOffset, hOffset - 25, 220 + this.xSize, 20);
+        tokenTxt = new GuiTextField(0, this.fontRenderer, wOffset, hOffset - 25, 220 + this.xSize, 20);
         tokenTxt.setMaxStringLength(Integer.MAX_VALUE);
 
         this.buttonList.add(matchAll = new GuiCheckBox(ID_OPTION_MATCHALL, wOffset, hOffset += 10, "Match not empty (*)", false));
@@ -309,7 +316,7 @@ public class MTRMGui extends GuiContainer
         switch (btn.id)
         {
             case ID_CLOSE:
-                this.mc.thePlayer.closeScreen();
+                this.mc.player.closeScreen();
                 break;
             case ID_SEND:
                 messageSend.remove = remove.isChecked();
@@ -412,7 +419,7 @@ public class MTRMGui extends GuiContainer
                     if (labels.containsKey(checkBox)) for (GuiCustomLabel l : labels.get(checkBox)) l.draw = false;
                 }
             }
-            container.getSlot(RETURN_SLOT_ID).putStack(null);
+            container.getSlot(RETURN_SLOT_ID).putStack(ItemStack.EMPTY);
         }
         else
         {
@@ -459,7 +466,7 @@ public class MTRMGui extends GuiContainer
                     if (!oreDict.isChecked())
                     {
                         ItemStack stack = container.getSlot(editing).getStack();
-                        if (stack != null) slider.maxValue = stack.getItem().getMaxDamage();
+                        if (!stack.isEmpty()) slider.maxValue = stack.getMaxDamage();
                     }
                 }
                 if (token != null && patterns.containsKey(checkBox))
@@ -504,7 +511,7 @@ public class MTRMGui extends GuiContainer
 
         tokenTxt.setVisible(visible);
 
-        if (!visible) container.putStackInSlot(RETURN_SLOT_ID, null);
+        if (!visible) container.putStackInSlot(RETURN_SLOT_ID, ItemStack.EMPTY);
     }
 
 //    protected void keyTyped(char p_73869_1_, int p_73869_2_)
@@ -528,15 +535,16 @@ public class MTRMGui extends GuiContainer
     {
         if (editing != -1)
         {
-            this.fontRendererObj.drawString("Editing slot " + editing, -110, -55, 0xFFFFFF);
-            this.fontRendererObj.drawString("Slot Options", -100, -20, 0xFFFFFF);
+            this.fontRenderer.drawString("Editing slot " + editing, -110, -55, 0xFFFFFF);
+            this.fontRenderer.drawString("Slot Options", -100, -20, 0xFFFFFF);
         }
-        this.fontRendererObj.drawString("Recipe Options", this.xSize + 15, 0, 0xFFFFFF);
-        this.fontRendererObj.drawString("MineTweaker Recipe Maker", 28, 4, 4210752);
-        this.fontRendererObj.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 5, 4210752);
-        if (errorMessage != null) this.drawCenteredString(this.fontRendererObj, errorMessage, this.xSize / 2, -15, 0xFF0000);
-        this.fontRendererObj.drawString("0", 144, 53, 0xFFFFFF);
-        for (int y = 0; y < 3; ++y) for (int x = 0; x < 3; ++x) this.fontRendererObj.drawString(String.valueOf(1 + y * 3 + x), 28 + x * 26, 25 + y * 26, 0xFFFFFF);
+        this.fontRenderer.drawString("Recipe Options", this.xSize + 15, 0, 0xFFFFFF);
+        this.fontRenderer.drawString("MineTweaker Recipe Maker", 28, 4, 4210752);
+        this.fontRenderer.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 5, 4210752);
+        if (errorMessage != null)
+            this.drawCenteredString(this.fontRenderer, errorMessage, this.xSize / 2, -15, 0xFF0000);
+        this.fontRenderer.drawString("0", 144, 53, 0xFFFFFF);
+        for (int y = 0; y < 3; ++y) for (int x = 0; x < 3; ++x) this.fontRenderer.drawString(String.valueOf(1 + y * 3 + x), 28 + x * 26, 25 + y * 26, 0xFFFFFF);
         for (GuiCustomLabel[] labela : labels.values()) for (GuiCustomLabel label : labela) if (label.draw) label.draw(true);
     }
 
@@ -578,7 +586,7 @@ public class MTRMGui extends GuiContainer
 
         public void draw(boolean b)
         {
-            if (b) fontRendererObj.drawString(text, x, y, color);
+            if (b) fontRenderer.drawString(text, x, y, color);
         }
     }
 }

@@ -25,9 +25,9 @@ group = "net.doubledoordev.mtrm"
 archivesBaseName = "MineTweakerRecipeMaker"
 
 minecraft {
-    version = "1.10.2-12.18.2.2099"
+    version = "1.11.2-13.20.0.2235"
     runDir = "run"
-    mappings = "snapshot_20161013"
+    mappings = "snapshot_20170221"
 }
 
 processResources {
