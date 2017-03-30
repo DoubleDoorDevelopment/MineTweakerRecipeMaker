@@ -2,6 +2,7 @@ package net.doubledoordev.mtrm.network;
 
 import io.netty.buffer.ByteBuf;
 import net.doubledoordev.mtrm.MineTweakerRecipeMaker;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -14,6 +15,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.concurrent.Callable;
 
 /**
  * @author Dries007
@@ -199,7 +201,14 @@ public class MessageSend implements IMessage
             FileUtils.writeLines(file, lines);
             try
             {
-                Class.forName("minetweaker.MineTweakerImplementationAPI").getDeclaredMethod("reload").invoke(null);
+                FMLCommonHandler.instance().getMinecraftServerInstance().callFromMainThread(new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception
+                    {
+                        Class.forName("minetweaker.MineTweakerImplementationAPI").getDeclaredMethod("reload").invoke(null);
+                        return null;
+                    }
+                });
             }
             catch (Exception e)
             {
