@@ -1,14 +1,17 @@
 /*
- * Copyright (c) 2015 - 2016, Dries007 & Double Door Development
+ * Copyright (c) 2015 - 2017, Dries007 & Double Door Development
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  Redistributions of source code must retain the above copyright notice, this
+ * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *   written prior approval.
+ *
+ * + Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- *  Redistributions in binary form must reproduce the above copyright notice,
+ * + Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -65,7 +68,8 @@ public class StringInputElement extends ButtonElement
             if (text.isEmpty()) setDisplayText(emptyDisplayText);
             else setDisplayText(text.replace('\n', '↲'));
         }
-        else height = (Math.max(ClientHelper.split(fontRendererObj, text, width).size(), 1) * fontRendererObj.FONT_HEIGHT + 6);
+        else
+            height = (Math.max(ClientHelper.split(fontRendererObj, text, width).size(), 1) * fontRendererObj.FONT_HEIGHT + 6);
         resizeCallback();
     }
 
@@ -89,7 +93,8 @@ public class StringInputElement extends ButtonElement
 
             ClientHelper.drawSplit(fontRendererObj, text, width, 0xFFFFFF, posX, posY);
 
-            if (blinkTimer / 6 % 2 == 0) drawVerticalLine((int)fontRendererObj.posX, (int)fontRendererObj.posY - 1, (int)fontRendererObj.posY + fontRendererObj.FONT_HEIGHT - 1, 0xFFFFFFFF);
+            if (blinkTimer / 6 % 2 == 0)
+                drawVerticalLine((int) fontRendererObj.posX, (int) fontRendererObj.posY - 1, (int) fontRendererObj.posY + fontRendererObj.FONT_HEIGHT - 1, 0xFFFFFFFF);
         }
     }
 
@@ -139,9 +144,11 @@ public class StringInputElement extends ButtonElement
                     break;
                 case Keyboard.KEY_NUMPADENTER: //fallthrough
                 case Keyboard.KEY_RETURN:
-                    text += '\n'; break;
+                    text += '\n';
+                    break;
                 case Keyboard.KEY_DELETE:
-                    text = ""; break;
+                    text = "";
+                    break;
                 default:
                     if (typedChar != 0)
                         text += typedChar;

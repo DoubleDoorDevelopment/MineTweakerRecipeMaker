@@ -30,3 +30,6 @@ Modpacks & license
 ------------------
 
 As per usual this mod is open-source, you can see the license [here](LICENSE.txt)
+
+There is one limitation: You cannot upload a clone or fork of this mod to Curse and/or CurseForge without prior written permission first.
+

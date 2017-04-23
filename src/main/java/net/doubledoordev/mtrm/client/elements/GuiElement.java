@@ -1,14 +1,17 @@
 /*
- * Copyright (c) 2015 - 2016, Dries007 & Double Door Development
+ * Copyright (c) 2015 - 2017, Dries007 & Double Door Development
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  Redistributions of source code must retain the above copyright notice, this
+ * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *   written prior approval.
+ *
+ * + Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- *  Redistributions in binary form must reproduce the above copyright notice,
+ * + Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -37,20 +40,16 @@ import javax.annotation.Nullable;
  */
 public abstract class GuiElement extends Gui
 {
+    public final boolean optional;
     protected final Minecraft mc;
-
+    private final GuiElementCallback callback;
     protected int width;
     protected int height;
     protected int posX;
     protected int posY;
     protected int maxWidth;
-
     protected boolean enabled = true;
     protected boolean visible;
-
-    public final boolean optional;
-
-    private final GuiElementCallback callback;
     private boolean focus;
 
     protected GuiElement(GuiElementCallback callback, boolean optional)
@@ -86,12 +85,14 @@ public abstract class GuiElement extends Gui
 
     /**
      * Only called if in focus
+     *
      * @return true if you handled the event
      */
     public boolean keyTyped(char typedChar, int keyCode) { return false; }
 
     /**
      * To force an update, use the updateButtonsCallback
+     *
      * @return false to disable the ok button
      */
     public boolean isValid() { return true; }

@@ -1,14 +1,17 @@
 /*
- * Copyright (c) 2015 - 2016, Dries007 & Double Door Development
+ * Copyright (c) 2015 - 2017, Dries007 & Double Door Development
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  Redistributions of source code must retain the above copyright notice, this
+ * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *   written prior approval.
+ *
+ * + Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- *  Redistributions in binary form must reproduce the above copyright notice,
+ * + Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -189,22 +192,6 @@ public final class XmlParser
         return root;
     }
 
-    public interface IInstanceCreator<T>
-    {
-        T create(Element node) throws Exception;
-    }
-
-    public interface IElementObject
-    {
-
-    }
-
-    public interface IStringObject extends IElementObject
-    {
-        String toHumanText();
-        GuiElement toGuiElement(GuiElement.GuiElementCallback callback);
-    }
-
     /**
      * INTERNAL
      * POST INIT OR LATER ONLY!
@@ -213,7 +200,8 @@ public final class XmlParser
     public static void addOverrideXml(ResourceLocation location, File file) throws Exception
     {
         ResourceLocation key = Helper.normalize(location);
-        if (DATA.containsKey(key)) MineTweakerRecipeMaker.log().info("Loading XML from filesystem [OVERRIDING!] {} ({})", location, file);
+        if (DATA.containsKey(key))
+            MineTweakerRecipeMaker.log().info("Loading XML from filesystem [OVERRIDING!] {} ({})", location, file);
         else MineTweakerRecipeMaker.log().info("Loading XML from filesystem {} ({})", location, file);
         DATA.put(key, parseRootXml(file));
     }
@@ -308,5 +296,22 @@ public final class XmlParser
             RELOAD_LIST.addAll(oldReloadList);
             return false;
         }
+    }
+
+    public interface IInstanceCreator<T>
+    {
+        T create(Element node) throws Exception;
+    }
+
+    public interface IElementObject
+    {
+
+    }
+
+    public interface IStringObject extends IElementObject
+    {
+        String toHumanText();
+
+        GuiElement toGuiElement(GuiElement.GuiElementCallback callback);
     }
 }

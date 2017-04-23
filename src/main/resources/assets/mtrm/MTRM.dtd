@@ -1,14 +1,17 @@
 <!--
-  ~ Copyright (c) 2015 - 2016, Dries007 & Double Door Development
+  ~ Copyright (c) 2015 - 2017, Dries007 & Double Door Development
   ~ All rights reserved.
   ~
   ~ Redistribution and use in source and binary forms, with or without
   ~ modification, are permitted provided that the following conditions are met:
   ~
-  ~ * Redistributions of source code must retain the above copyright notice, this
+  ~ + Redistributions via the Curse or CurseForge platform are not allowed without
+  ~   written prior approval.
+  ~
+  ~ + Redistributions of source code must retain the above copyright notice, this
   ~   list of conditions and the following disclaimer.
   ~
-  ~ * Redistributions in binary form must reproduce the above copyright notice,
+  ~ + Redistributions in binary form must reproduce the above copyright notice,
   ~   this list of conditions and the following disclaimer in the documentation
   ~   and/or other materials provided with the distribution.
   ~
@@ -62,9 +65,9 @@
             TLDR: Outputs are items and inputs are often ingredients. Items are a subset of Ingredients.
         -->
         <!ATTLIST slot type (item|ingredient) #REQUIRED>
-        <!-- DEFAULTS                                           Item    Ingredient  Explanation -->
-        <!ATTLIST slot optional (true|false) #IMPLIED><!--      false   true        true if value can be null -->
-        <!ATTLIST slot wildcardAllowed (true|false) #IMPLIED><!--      false   true        true if value can be a wildcardAllowed '<*>' -->
-        <!ATTLIST slot metaWildcardAllowed (true|false) #IMPLIED><!--  false   true        true if metadata can be a wildcardAllowed '<mod:item:*>'-->
-        <!ATTLIST slot stacksizeAllowed (true|false) #IMPLIED><!--     true    false       true if there can be a stacksizeAllowed here -->
-        <!ATTLIST slot oredictAllowed (true|false) #IMPLIED><!--       false   true        true if oredictAllowed is optional here. If oredictAllowed is requred, use oredictAllowed instead of slot-->
+        <!-- DEFAULTS                                                   Item    Ingredient  Explanation -->
+        <!ATTLIST slot optional (true|false) #IMPLIED><!--              false   true        true if value can be null -->
+        <!ATTLIST slot wildcardAllowed (true|false) #IMPLIED><!--       false   true        true if value can be a wildcardAllowed '<*>' -->
+        <!ATTLIST slot metaWildcardAllowed (true|false) #IMPLIED><!--   false   true        true if metadata can be a wildcardAllowed '<mod:item:*>'-->
+        <!ATTLIST slot stacksizeAllowed (true|false) #IMPLIED><!--      true    false       true if there can be a stacksizeAllowed here -->
+        <!ATTLIST slot oredictAllowed (true|false) #IMPLIED><!--        false   true        true if oredictAllowed is optional here. If oredictAllowed is requred, use oredictAllowed instead of slot-->

@@ -1,14 +1,17 @@
 /*
- * Copyright (c) 2015 - 2016, Dries007 & Double Door Development
+ * Copyright (c) 2015 - 2017, Dries007 & Double Door Development
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  Redistributions of source code must retain the above copyright notice, this
+ * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *   written prior approval.
+ *
+ * + Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- *  Redistributions in binary form must reproduce the above copyright notice,
+ * + Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -40,7 +43,9 @@ import java.util.List;
  */
 public abstract class GuiListBase extends GuiBase implements GuiElement.GuiElementCallback
 {
-    /** Must be initialized BEFORE the init method is called! */
+    /**
+     * Must be initialized BEFORE the init method is called!
+     */
     protected final List<GuiElement> guiElements = new ArrayList<>();
     protected int listLeft;
     protected int listRight;
@@ -67,7 +72,7 @@ public abstract class GuiListBase extends GuiBase implements GuiElement.GuiEleme
         for (GuiElement obj : guiElements) listInternalHeight += obj.getHeight() + 1;
 
         // posY = top of the element, starts out above the top of the list if scrolled
-        int posY = listTop - (int)((listInternalHeight - listSizeY) * currentScroll);
+        int posY = listTop - (int) ((listInternalHeight - listSizeY) * currentScroll);
         GuiElement tooBig = null;
         for (GuiElement obj : guiElements)
         {
@@ -171,7 +176,8 @@ public abstract class GuiListBase extends GuiBase implements GuiElement.GuiEleme
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         GlStateManager.pushMatrix();
         GlStateManager.translate(-guiLeft, -guiTop, 0.0F);
-        for (GuiElement obj : guiElements) if (obj.isVisible() && obj.isOver(mouseX, mouseY)) obj.drawHover(mouseX, mouseY, width, height);
+        for (GuiElement obj : guiElements)
+            if (obj.isVisible() && obj.isOver(mouseX, mouseY)) obj.drawHover(mouseX, mouseY, width, height);
         GlStateManager.popMatrix();
     }
 

@@ -1,14 +1,17 @@
 /*
- * Copyright (c) 2015 - 2016, Dries007 & Double Door Development
+ * Copyright (c) 2015 - 2017, Dries007 & Double Door Development
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  Redistributions of source code must retain the above copyright notice, this
+ * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *   written prior approval.
+ *
+ * + Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- *  Redistributions in binary form must reproduce the above copyright notice,
+ * + Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -57,6 +60,15 @@ public final class Helper
 
     public static final String DTD = "/assets/mtrm/MTRM.dtd";
 
+    public static final FileFilter FILE_FILTER_XML = new FileFilter()
+    {
+        @Override
+        public boolean accept(File pathname)
+        {
+            return pathname.isDirectory() || FilenameUtils.getExtension(pathname.getName()).equalsIgnoreCase("XML");
+        }
+    };
+
     private Helper() {}
 
     public static File getScriptFile() throws IOException
@@ -88,17 +100,14 @@ public final class Helper
 
     /**
      * Recursive XML file finder. Always returns the given list.
+     *
      * @return the list parameter
      */
     public static List<File> findXMLFiles(File folder, List<File> list)
     {
-        for (File file : folder.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname)
-            {
-                return pathname.isDirectory() || FilenameUtils.getExtension(pathname.getName()).equalsIgnoreCase("XML");
-            }
-        }))
+        if (!folder.isDirectory()) throw new IllegalArgumentException(folder + " is not a directory.");
+        //noinspection ConstantConditions
+        for (File file : folder.listFiles(FILE_FILTER_XML))
         {
             if (file.isDirectory()) findXMLFiles(file, list);
             else list.add(file);
@@ -109,17 +118,17 @@ public final class Helper
     public static void makeReadme(File file) throws IOException
     {
         FileUtils.writeLines(file, Arrays.asList(
-            "If you want to manually add or edit XML config files, put them in there like they would be in a resourcepack.",
-            "This WILL override existing files if they already exist. There will be no version checking!",
-            "If you make a useful change, submit it to the original authors, so everyone will benefit.",
-            "~Dries007",
-            "",
-            "EXAMPLES:",
-            "You want the edit the default vanilla XML: Put it at 'overrides/mtrm/vanilla.xml'",
-            "If you want to add a new XML file, you can put it wherever inside of 'overrides', as long as it has a sub-folder.",
-            "",
-            "The current MTRM DTD File: (Use this to make sure your XML is correct):",
-            ""
+                "If you want to manually add or edit XML config files, put them in there like they would be in a resourcepack.",
+                "This WILL override existing files if they already exist. There will be no version checking!",
+                "If you make a useful change, submit it to the original authors, so everyone will benefit.",
+                "~Dries007",
+                "",
+                "EXAMPLES:",
+                "You want the edit the default vanilla XML: Put it at 'overrides/mtrm/vanilla.xml'",
+                "If you want to add a new XML file, you can put it wherever inside of 'overrides', as long as it has a sub-folder.",
+                "",
+                "The current MTRM DTD File: (Use this to make sure your XML is correct):",
+                ""
         ), "\r\n");
         InputStream is = MineTweakerRecipeMaker.class.getResourceAsStream(DTD);
         FileUtils.writeStringToFile(file, IOUtils.toString(is).replaceAll("\\r?\\n", "\n"), true);

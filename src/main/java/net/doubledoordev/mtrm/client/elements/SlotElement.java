@@ -1,14 +1,17 @@
 /*
- * Copyright (c) 2015 - 2016, Dries007 & Double Door Development
+ * Copyright (c) 2015 - 2017, Dries007 & Double Door Development
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  Redistributions of source code must retain the above copyright notice, this
+ * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *   written prior approval.
+ *
+ * + Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- *  Redistributions in binary form must reproduce the above copyright notice,
+ * + Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -105,7 +108,7 @@ public class SlotElement extends GuiElement
     {
         if (input == null) reset();
         else if (!oredictAllowed) setItemStack(input);
-        else if (input == oredictPrevStack)
+        else if (input == oredictPrevStack && oredictIds.length != 0)
         {
             oredictIdCounter++;
             oredictIdCounter %= oredictIds.length;
@@ -114,7 +117,9 @@ public class SlotElement extends GuiElement
         else
         {
             oredictPrevStack = input;
+            oredictIdCounter = 0;
             oredictIds = OreDictionary.getOreIDs(input);
+            setOredict(OreDictionary.getOreName(oredictIds[oredictIdCounter]));
         }
     }
 
@@ -162,7 +167,7 @@ public class SlotElement extends GuiElement
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         drawTexturedModalRect(posX, posY, 256 - 18, 256 - 18, 18, 18);
         RenderHelper.enableGUIStandardItemLighting();
-        drawItemStack(stack, posX+1, posY+1, null);
+        drawItemStack(stack, posX + 1, posY + 1, null);
         RenderHelper.disableStandardItemLighting();
     }
 
@@ -195,7 +200,7 @@ public class SlotElement extends GuiElement
                 stack = oredictList.get(oredictCounter++ % oredictList.size()).copy();
                 stack.stackSize = stacksize;
             }
-            tickCounter ++;
+            tickCounter++;
         }
     }
 

@@ -1,14 +1,17 @@
 /*
- * Copyright (c) 2015 - 2016, Dries007 & Double Door Development
+ * Copyright (c) 2015 - 2017, Dries007 & Double Door Development
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  Redistributions of source code must retain the above copyright notice, this
+ * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *   written prior approval.
+ *
+ * + Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- *  Redistributions in binary form must reproduce the above copyright notice,
+ * + Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -108,7 +111,7 @@ public class GuiMain extends GuiListBase
     {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
 
-        fontRendererObj.drawString(Helper.NAME, guiLeft + xSize/2 - fontRendererObj.getStringWidth(Helper.NAME) / 2, guiTop - 10, 0xFFFFFF);
+        fontRendererObj.drawString(Helper.NAME, guiLeft + xSize / 2 - fontRendererObj.getStringWidth(Helper.NAME) / 2, guiTop - 10, 0xFFFFFF);
     }
 
 //    @Override
@@ -189,8 +192,10 @@ public class GuiMain extends GuiListBase
 
         switch (button.id)
         {
-            case BTN_RELOAD: load(true); break;
-//            case BTN_EDIT: this.mc.displayGuiScreen(new GuiList()); break;
+            case BTN_RELOAD:
+                load(true);
+                break;
+// todo            case BTN_EDIT: this.mc.displayGuiScreen(new GuiList()); break;
         }
     }
 
