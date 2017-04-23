@@ -69,7 +69,10 @@ public abstract class GuiListBase extends GuiBase implements GuiElement.GuiEleme
     {
         // Calculate internal height, used for scrolling
         listInternalHeight = 0;
-        for (GuiElement obj : guiElements) listInternalHeight += obj.getHeight() + 1;
+        for (GuiElement obj : guiElements)
+        {
+            listInternalHeight += obj.getHeight() + 1;
+        }
 
         // posY = top of the element, starts out above the top of the list if scrolled
         int posY = listTop - (int) ((listInternalHeight - listSizeY) * currentScroll);
@@ -115,17 +118,65 @@ public abstract class GuiListBase extends GuiBase implements GuiElement.GuiEleme
         }
 
         // Nuke all other elements if there is a tooBig
-        if (tooBig != null) for (GuiElement obj : guiElements) if (obj != tooBig) obj.setVisible(false);
+        if (tooBig != null)
+        {
+            for (GuiElement obj : guiElements)
+            {
+                if (obj != tooBig)
+                {
+                    obj.setVisible(false);
+                }
+            }
+        }
     }
 
     @Override
-    protected void scrolled()
+    public void resizeCallback(GuiElement element)
     {
         doListCalculations();
     }
 
     @Override
-    public void resizeCallback(GuiElement element)
+    public void updateButtons(GuiElement element)
+    {
+        btnOk.enabled = true;
+        for (GuiElement obj : guiElements)
+        {
+            btnOk.enabled &= obj.isValid();
+        }
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
+    {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        for (GuiElement element : guiElements)
+        {
+            if (element.isVisible())
+            {
+                element.onClick(mouseX, mouseY, mouseButton);
+            }
+        }
+    }
+
+    @Override
+    public void updateScreen()
+    {
+        super.updateScreen();
+        for (GuiElement obj : guiElements)
+        {
+            obj.update();
+        }
+    }
+
+    @Override
+    protected boolean needsScrolling()
+    {
+        return listInternalHeight > listSizeY;
+    }
+
+    @Override
+    protected void scrolled()
     {
         doListCalculations();
     }
@@ -143,31 +194,13 @@ public abstract class GuiListBase extends GuiBase implements GuiElement.GuiEleme
         listBottom = guiTop + ySize - 8;
         listSizeY = listBottom - listTop;
 
-        for (GuiElement obj : guiElements) obj.initGui(listSizeX);
+        for (GuiElement obj : guiElements)
+        {
+            obj.initGui(listSizeX);
+        }
 
         doListCalculations();
         updateButtons(null);
-    }
-
-    @Override
-    public void updateScreen()
-    {
-        super.updateScreen();
-        for (GuiElement obj : guiElements) obj.update();
-    }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
-    {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        for (GuiElement obj : guiElements)
-            if (obj.isVisible())
-            {
-                int x = obj.getPosX();
-                int y = obj.getPosY();
-                drawRect(x, y, x + obj.getWidth(), y + obj.getHeight(), 0x50FF0000);
-                obj.draw(mouseX, mouseY, partialTicks);
-            }
     }
 
     @Override
@@ -177,35 +210,45 @@ public abstract class GuiListBase extends GuiBase implements GuiElement.GuiEleme
         GlStateManager.pushMatrix();
         GlStateManager.translate(-guiLeft, -guiTop, 0.0F);
         for (GuiElement obj : guiElements)
-            if (obj.isVisible() && obj.isOver(mouseX, mouseY)) obj.drawHover(mouseX, mouseY, width, height);
+        {
+            if (obj.isVisible() && obj.isOver(mouseX, mouseY))
+            {
+                obj.drawHover(mouseX, mouseY, width, height);
+            }
+        }
         GlStateManager.popMatrix();
     }
 
     @Override
-    public void updateButtons(GuiElement element)
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
     {
-        btnOk.enabled = true;
-        for (GuiElement obj : guiElements) btnOk.enabled &= obj.isValid();
-    }
-
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
-    {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        for (GuiElement element : guiElements) if (element.isVisible()) element.onClick(mouseX, mouseY, mouseButton);
+        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+        for (GuiElement obj : guiElements)
+        {
+            if (obj.isVisible())
+            {
+                int x = obj.getPosX();
+                int y = obj.getPosY();
+                drawRect(x, y, x + obj.getWidth(), y + obj.getHeight(), 0x50FF0000);
+                obj.draw(mouseX, mouseY, partialTicks);
+            }
+        }
     }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode)
     {
         boolean handled = false;
-        for (GuiElement element : guiElements) if (element.isFocused()) handled |= element.keyTyped(typedChar, keyCode);
-        if (!handled) super.keyTyped(typedChar, keyCode);
-    }
-
-    @Override
-    protected boolean needsScrolling()
-    {
-        return listInternalHeight > listSizeY;
+        for (GuiElement element : guiElements)
+        {
+            if (element.isFocused())
+            {
+                handled |= element.keyTyped(typedChar, keyCode);
+            }
+        }
+        if (!handled)
+        {
+            super.keyTyped(typedChar, keyCode);
+        }
     }
 }

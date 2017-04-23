@@ -54,7 +54,10 @@ public class ClientHelper
 
     public static List<String> split(FontRenderer renderer, String text, int width, int lineLimit)
     {
-        if (text.length() == 0) return new ArrayList<>();
+        if (text.length() == 0)
+        {
+            return new ArrayList<>();
+        }
         List<String> list = new ArrayList<>();
         StringBuilder line = new StringBuilder();
         for (int i = 0; i < text.length(); i++)
@@ -64,13 +67,19 @@ public class ClientHelper
             if (c == '\n')
             {
                 list.add(line.substring(0, line.length() - 1));
-                if (list.size() >= lineLimit--) return list;
+                if (list.size() >= lineLimit--)
+                {
+                    return list;
+                }
                 line = new StringBuilder();
             }
             else if (w >= width)
             {
                 list.add(line.substring(0, line.length() - 1) + '→');
-                if (list.size() >= lineLimit--) return list;
+                if (list.size() >= lineLimit--)
+                {
+                    return list;
+                }
                 line = new StringBuilder();
                 line.append(c);
             }
@@ -84,7 +93,10 @@ public class ClientHelper
         List<String> lines = split(renderer, text, width);
         renderer.posX = x;
         renderer.posY = y;
-        if (lines.isEmpty()) return;
+        if (lines.isEmpty())
+        {
+            return;
+        }
         renderer.drawString(lines.remove(0), x, y, color);
         for (String line : lines)
         {

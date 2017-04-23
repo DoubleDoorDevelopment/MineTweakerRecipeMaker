@@ -87,71 +87,24 @@ public class SlotElement extends GuiElement
         width = 18;
     }
 
-    protected void focusStatusChanged()
+    @Override
+    public void update()
     {
-        // todo: option buttons
-        // todo: add modifiers
-        if (isFocused())
+        super.update();
+        if (oredict != null)
         {
-            height = 32;
-            width = 32;
+            if (tickCounter / 6 % 2 == 0)
+            {
+                int stacksize = 0;
+                if (stack != null)
+                {
+                    stacksize = stack.stackSize;
+                }
+                stack = oredictList.get(oredictCounter++ % oredictList.size()).copy();
+                stack.stackSize = stacksize;
+            }
+            tickCounter++;
         }
-        else
-        {
-            height = 18;
-            width = 18;
-        }
-        resizeCallback();
-    }
-
-    protected void setItemStackOrOredict(ItemStack input)
-    {
-        if (input == null) reset();
-        else if (!oredictAllowed) setItemStack(input);
-        else if (input == oredictPrevStack && oredictIds.length != 0)
-        {
-            oredictIdCounter++;
-            oredictIdCounter %= oredictIds.length;
-            setOredict(OreDictionary.getOreName(oredictIds[oredictIdCounter]));
-        }
-        else
-        {
-            oredictPrevStack = input;
-            oredictIdCounter = 0;
-            oredictIds = OreDictionary.getOreIDs(input);
-            setOredict(OreDictionary.getOreName(oredictIds[oredictIdCounter]));
-        }
-    }
-
-    /**
-     * Reset
-     */
-    protected void reset()
-    {
-        tickCounter = 0;
-        oredict = null;
-        oredictCounter = 0;
-        oredictList = null;
-        stack = null;
-        updateButtonsCallback();
-    }
-
-    protected void setItemStack(ItemStack input)
-    {
-        if (oredictRequired) return; // Shouldn't happen, but you never know
-        reset();
-        stack = input.copy();
-        stack.setTagCompound(null);
-        if (!stacksizeAllowed) stack.stackSize = 1;
-        updateButtonsCallback();
-    }
-
-    protected void setOredict(String value)
-    {
-        if (!oredictAllowed) return; // Shouldn't happen, but you never know
-        reset();
-        oredictList = OreDictionary.getOres(value, false);
-        updateButtonsCallback();
     }
 
     @Override
@@ -171,37 +124,159 @@ public class SlotElement extends GuiElement
         RenderHelper.disableStandardItemLighting();
     }
 
+    @Override
+    public void drawHover(int mouseX, int mouseY, int maxWidth, int maxHeight)
+    {
+        super.drawHover(mouseX, mouseY, maxWidth, maxHeight);
+        GuiUtils.drawHoveringText(getHoverLines(), mouseX, mouseY, maxWidth, maxHeight, -1, mc.fontRendererObj);
+    }
+
+    @Override
+    protected void onClickOn(int mouseX, int mouseY, int mouseButton)
+    {
+        super.onClickOn(mouseX, mouseY, mouseButton);
+        ItemStack heldStack = mc.thePlayer.inventory.getItemStack();
+        if (heldStack != null)
+        {
+            setItemStackOrOredict(heldStack);
+        }
+        else if (stack != null && mouseButton == 1)
+        {
+            setItemStackOrOredict(null);
+        }
+    }
+
+    @Override
+    public boolean keyTyped(char typedChar, int keyCode)
+    {
+        return super.keyTyped(typedChar, keyCode);
+    }
+
+    @Override
+    public boolean isValid()
+    {
+        return super.isValid() && (oredict != null || stack != null || optional);
+    }
+
+    @Override
+    public void onClick(int mouseX, int mouseY, int mouseButton)
+    {
+        super.onClick(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
+    public void setFocus(boolean focus)
+    {
+        boolean oldFocus = this.isFocused();
+        super.setFocus(focus);
+        if (oldFocus != focus)
+        {
+            focusStatusChanged();
+        }
+    }
+
+    protected void focusStatusChanged()
+    {
+        // todo: option buttons
+        // todo: add modifiers
+        if (isFocused())
+        {
+            height = 32;
+            width = 32;
+        }
+        else
+        {
+            height = 18;
+            width = 18;
+        }
+        resizeCallback();
+    }
+
+    protected void setItemStackOrOredict(ItemStack input)
+    {
+        if (input == null)
+        {
+            reset();
+        }
+        else if (!oredictAllowed)
+        {
+            setItemStack(input);
+        }
+        else if (input == oredictPrevStack && oredictIds.length != 0)
+        {
+            oredictIdCounter++;
+            oredictIdCounter %= oredictIds.length;
+            setOredict(OreDictionary.getOreName(oredictIds[oredictIdCounter]));
+        }
+        else
+        {
+            oredictPrevStack = input;
+            oredictIdCounter = 0;
+            oredictIds = OreDictionary.getOreIDs(input);
+            reset();
+        }
+    }
+
+    /**
+     * Reset
+     */
+    protected void reset()
+    {
+        tickCounter = 0;
+        oredict = null;
+        oredictCounter = 0;
+        oredictList = null;
+        stack = null;
+        updateButtonsCallback();
+    }
+
+    protected void setItemStack(ItemStack input)
+    {
+        if (oredictRequired)
+        {
+            return; // Shouldn't happen, but you never know
+        }
+        reset();
+        stack = input.copy();
+        stack.setTagCompound(null);
+        if (!stacksizeAllowed)
+        {
+            stack.stackSize = 1;
+        }
+        updateButtonsCallback();
+    }
+
+    protected void setOredict(String value)
+    {
+        if (!oredictAllowed)
+        {
+            return; // Shouldn't happen, but you never know
+        }
+        reset();
+        oredictList = OreDictionary.getOres(value, false);
+        updateButtonsCallback();
+    }
+
     protected void drawItemStack(ItemStack stack, int x, int y, String altText)
     {
-        if (stack == null) return;
+        if (stack == null)
+        {
+            return;
+        }
         GlStateManager.translate(0.0F, 0.0F, 32.0F);
         zLevel = 200.0F;
         RenderItem itemRender = mc.getRenderItem();
         itemRender.zLevel = 200.0F;
         FontRenderer font = stack.getItem().getFontRenderer(stack);
         //noinspection ConstantConditions
-        if (font == null) font = mc.fontRendererObj;
+        if (font == null)
+        {
+            font = mc.fontRendererObj;
+        }
         itemRender.renderItemAndEffectIntoGUI(stack, x, y);
         itemRender.renderItemOverlayIntoGUI(font, stack, x, y, altText);
         zLevel = 0.0F;
         itemRender.zLevel = 0.0F;
-    }
-
-    @Override
-    public void update()
-    {
-        super.update();
-        if (oredict != null)
-        {
-            if (tickCounter / 6 % 2 == 0)
-            {
-                int stacksize = 0;
-                if (stack != null) stacksize = stack.stackSize;
-                stack = oredictList.get(oredictCounter++ % oredictList.size()).copy();
-                stack.stackSize = stacksize;
-            }
-            tickCounter++;
-        }
     }
 
     protected ArrayList<String> getHoverLines()
@@ -215,51 +290,18 @@ public class SlotElement extends GuiElement
         list.add("- Ore Dictionary: " + (oredictAllowed ? "Allowed" : "Not Allowed"));
         list.add("- Stack size: " + (stacksizeAllowed ? "Allowed" : "Not Allowed"));
         list.add(ChatFormatting.AQUA + "Current value:");
-        if (oredict != null) list.add(oredict);
-        else if (stack != null) list.addAll(stack.getTooltip(mc.thePlayer, true));
-        else list.add("null");
+        if (oredict != null)
+        {
+            list.add(oredict);
+        }
+        else if (stack != null)
+        {
+            list.addAll(stack.getTooltip(mc.thePlayer, true));
+        }
+        else
+        {
+            list.add("null");
+        }
         return list;
-    }
-
-    @Override
-    public void drawHover(int mouseX, int mouseY, int maxWidth, int maxHeight)
-    {
-        super.drawHover(mouseX, mouseY, maxWidth, maxHeight);
-        GuiUtils.drawHoveringText(getHoverLines(), mouseX, mouseY, maxWidth, maxHeight, -1, mc.fontRendererObj);
-    }
-
-    @Override
-    protected void onClickOn(int mouseX, int mouseY, int mouseButton)
-    {
-        super.onClickOn(mouseX, mouseY, mouseButton);
-        ItemStack heldStack = mc.thePlayer.inventory.getItemStack();
-        if (heldStack != null) setItemStackOrOredict(heldStack);
-        else if (stack != null && mouseButton == 1) setItemStackOrOredict(null);
-    }
-
-    @Override
-    public void setFocus(boolean focus)
-    {
-        boolean oldFocus = this.isFocused();
-        super.setFocus(focus);
-        if (oldFocus != focus) focusStatusChanged();
-    }
-
-    @Override
-    public boolean keyTyped(char typedChar, int keyCode)
-    {
-        return super.keyTyped(typedChar, keyCode);
-    }
-
-    @Override
-    public boolean isValid()
-    {
-        return oredict != null || stack != null || optional;
-    }
-
-    @Override
-    public void onClick(int mouseX, int mouseY, int mouseButton)
-    {
-        super.onClick(mouseX, mouseY, mouseButton);
     }
 }

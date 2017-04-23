@@ -63,7 +63,10 @@ public class GuiIconButton extends GuiButton
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY)
     {
-        if (!visible) return;
+        if (!visible)
+        {
+            return;
+        }
 
         hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
         // 0 = disabled, 1 = normal, 2 = hover

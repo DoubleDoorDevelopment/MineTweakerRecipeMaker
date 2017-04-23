@@ -31,8 +31,15 @@
 package net.doubledoordev.mtrm;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nullable;
+
+import static net.minecraft.inventory.ClickType.QUICK_CRAFT;
+import static net.minecraft.inventory.ClickType.QUICK_MOVE;
 
 /**
  * @author Dries007
@@ -49,10 +56,26 @@ public class InventoryContainer extends Container
         this.player = player;
 
         for (int x = 0; x < 3; ++x)
+        {
             for (int y = 0; y < 9; ++y)
+            {
                 this.addSlotToContainer(new Slot(player.inventory, y + x * 9 + 9, offsetY + y * 18, x * 18 + offsetX));
+            }
+        }
         for (int x = 0; x < 9; ++x)
+        {
             this.addSlotToContainer(new Slot(player.inventory, x, offsetY + x * 18, 58 + offsetX));
+        }
+    }
+
+    @Nullable
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player)
+    {
+        if (clickTypeIn == QUICK_MOVE || clickTypeIn == QUICK_CRAFT)
+        {
+            return null;
+        }
+        return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
 
     @Override

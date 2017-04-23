@@ -72,6 +72,19 @@ public class NbtElement extends StringInputElement
     }
 
     @Override
+    protected void onClick()
+    {
+        super.onClick();
+        setData(mc.thePlayer.inventory.getItemStack());
+    }
+
+    @Override
+    public String save()
+    {
+        return text;
+    }
+
+    @Override
     public boolean keyTyped(char typedChar, int keyCode)
     {
         boolean flag = super.keyTyped(typedChar, keyCode);
@@ -80,46 +93,44 @@ public class NbtElement extends StringInputElement
     }
 
     @Override
-    public void setEnabled(boolean enabled)
+    public ArrayList<String> getHoverLines()
     {
-        super.setEnabled(enabled);
-        validate();
-    }
-
-    @Override
-    protected void onClick()
-    {
-        super.onClick();
-        setData(mc.thePlayer.inventory.getItemStack());
+        ArrayList<String> list = super.getHoverLines();
+        if (!isValid())
+        {
+            list.add(TextFormatting.RED + error);
+        }
+        return list;
     }
 
     private void setData(ItemStack stack)
     {
-        if (stack == null) return;
+        if (stack == null)
+        {
+            return;
+        }
         NBTTagCompound root = stack.getTagCompound();
-        if (root == null) text = "";
-        else text = root.toString();
+        if (root == null)
+        {
+            text = "";
+        }
+        else
+        {
+            text = root.toString();
+        }
         validate();
     }
 
     @Override
     public boolean isValid()
     {
-        if (!enabled) return optional;
-        return error == null;
+        return super.isValid() && error == null;
     }
 
     @Override
-    public ArrayList<String> getHoverLines()
+    public void setEnabled(boolean enabled)
     {
-        ArrayList<String> list = super.getHoverLines();
-        if (!isValid()) list.add(TextFormatting.RED + error);
-        return list;
-    }
-
-    @Override
-    public String save()
-    {
-        return text;
+        super.setEnabled(enabled);
+        validate();
     }
 }

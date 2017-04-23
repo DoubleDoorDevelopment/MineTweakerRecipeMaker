@@ -95,7 +95,11 @@ public abstract class GuiElement extends Gui
      *
      * @return false to disable the ok button
      */
-    public boolean isValid() { return true; }
+    public boolean isValid()
+    {
+        // !enabled ? optional : true
+        return enabled || optional;
+    }
 
     /**
      * Call when your content becomes invalid / valid again.
@@ -132,11 +136,20 @@ public abstract class GuiElement extends Gui
     {
         if (isOver(mouseX, mouseY))
         {
-            if (mouseButton == 0) setFocus(true);
+            if (mouseButton == 0)
+            {
+                setFocus(true);
+            }
             onClickOn(mouseX, mouseY, mouseButton);
-            if (!isEnabled()) setFocus(false);
+            if (!isEnabled())
+            {
+                setFocus(false);
+            }
         }
-        else setFocus(false);
+        else
+        {
+            setFocus(false);
+        }
     }
 
     public boolean isOver(int x, int y)
@@ -186,7 +199,10 @@ public abstract class GuiElement extends Gui
     public void setEnabled(boolean enabled)
     {
         this.enabled = enabled;
-        if (!visible) setFocus(false);
+        if (!visible)
+        {
+            setFocus(false);
+        }
     }
 
     public boolean isVisible()
@@ -197,7 +213,10 @@ public abstract class GuiElement extends Gui
     public void setVisible(boolean visible)
     {
         this.visible = visible;
-        if (!visible) setFocus(false);
+        if (!visible)
+        {
+            setFocus(false);
+        }
     }
 
     public void setFocus(boolean focus)

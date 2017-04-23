@@ -81,11 +81,20 @@ public class MineTweakerRecipeMaker
     @NetworkCheckHandler
     public boolean networkChecker(Map<String, String> mods, Side side)
     {
-        if (true) return true; //fixme: doesn't work in dev env?
+        if (true)
+        {
+            return true; //fixme: doesn't work in dev env?
+        }
 
-        if (!mods.containsKey(Helper.MODID)) return side.isClient();
+        if (!mods.containsKey(Helper.MODID))
+        {
+            return side.isClient();
+        }
         DefaultArtifactVersion remote = new DefaultArtifactVersion("Remote", mods.get(Helper.MODID));
-        if (!new DefaultArtifactVersion("Minimum2.0", "[2.0,)").getRange().containsVersion(remote)) return false;
+        if (!new DefaultArtifactVersion("Minimum2.0", "[2.0,)").getRange().containsVersion(remote))
+        {
+            return false;
+        }
         DefaultArtifactVersion local = new DefaultArtifactVersion("Local", metadata.version);
         return remote.compareTo(local) >= 0;
     }
@@ -118,10 +127,16 @@ public class MineTweakerRecipeMaker
         Helper.loadOverrides(ImmutableList.<File>of());
         // Now register all the manual XML files
         File modFolder = new File(Loader.instance().getConfigDir(), Helper.MODID);
-        if (!modFolder.exists()) modFolder.mkdirs();
+        if (!modFolder.exists())
+        {
+            modFolder.mkdirs();
+        }
         Helper.makeReadme(new File(modFolder, "README.txt"));
         File rootFolder = new File(modFolder, "overrides");
-        if (!rootFolder.exists()) rootFolder.mkdirs();
+        if (!rootFolder.exists())
+        {
+            rootFolder.mkdirs();
+        }
         Path root = rootFolder.toPath();
         for (File f : Helper.findXMLFiles(rootFolder, new ArrayList<File>()))
         {

@@ -127,7 +127,7 @@ public final class XmlParser
         registerType("nbt", new Nbt.InstanceCreator());
         registerType("string", new ManualString.InstanceCreator());
         registerType("number", new Number.InstanceCreator());
-        registerType("oredictAllowed", new Oredict.InstanceCreator());
+        registerType("oredict", new Oredict.InstanceCreator());
         registerType("slot", new Slot.InstanceCreator());
     }
 
@@ -139,26 +139,44 @@ public final class XmlParser
     public static <T extends IElementObject> void registerType(String name, IInstanceCreator<T> creator)
     {
         name = name.toLowerCase();
-        if (TYPES.containsKey(name)) throw new IllegalArgumentException("Duplicate type name: " + name);
+        if (TYPES.containsKey(name))
+        {
+            throw new IllegalArgumentException("Duplicate type name: " + name);
+        }
         TYPES.put(name, creator);
     }
 
     public static <T extends IElementObject> T parse(Node node) throws Exception
     {
-        if (node.getNodeType() != Node.ELEMENT_NODE) throw new IllegalArgumentException("Node isn't an element.");
+        if (node.getNodeType() != Node.ELEMENT_NODE)
+        {
+            throw new IllegalArgumentException("Node isn't an element.");
+        }
         //noinspection unchecked
         IInstanceCreator<T> creator = (IInstanceCreator<T>) TYPES.get(node.getNodeName().toLowerCase());
-        if (creator == null) throw new IllegalArgumentException("Node type unknown: " + node.getNodeName());
+        if (creator == null)
+        {
+            throw new IllegalArgumentException("Node type unknown: " + node.getNodeName());
+        }
         return creator.create((Element) node);
     }
 
     private static Root parseRootXml(ResourceLocation rl) throws Exception
     {
         String path = "/assets/" + rl.getResourceDomain() + "/" + rl.getResourcePath();
-        if (!path.toLowerCase().endsWith(".xml")) path += ".xml";
+        if (!path.toLowerCase().endsWith(".xml"))
+        {
+            path += ".xml";
+        }
         InputStream is = MineTweakerRecipeMaker.class.getResourceAsStream(path);
-        if (is == null) is = MineTweakerRecipeMaker.class.getResourceAsStream(path.replace(".xml", ".XML"));
-        if (is == null) throw new FileNotFoundException(path);
+        if (is == null)
+        {
+            is = MineTweakerRecipeMaker.class.getResourceAsStream(path.replace(".xml", ".XML"));
+        }
+        if (is == null)
+        {
+            throw new FileNotFoundException(path);
+        }
         return parseRootXml('!' + path, is);
     }
 
@@ -182,8 +200,14 @@ public final class XmlParser
         {
             for (Node child = document.getFirstChild(); child != null; child = child.getNextSibling())
             {
-                if (child.getNodeType() != Node.ELEMENT_NODE) continue;
-                if (elementNode != null) throw new IllegalStateException("More then 1 root element? File: " + path);
+                if (child.getNodeType() != Node.ELEMENT_NODE)
+                {
+                    continue;
+                }
+                if (elementNode != null)
+                {
+                    throw new IllegalStateException("More then 1 root element? File: " + path);
+                }
                 elementNode = child;
             }
         }
@@ -201,8 +225,13 @@ public final class XmlParser
     {
         ResourceLocation key = Helper.normalize(location);
         if (DATA.containsKey(key))
+        {
             MineTweakerRecipeMaker.log().info("Loading XML from filesystem [OVERRIDING!] {} ({})", location, file);
-        else MineTweakerRecipeMaker.log().info("Loading XML from filesystem {} ({})", location, file);
+        }
+        else
+        {
+            MineTweakerRecipeMaker.log().info("Loading XML from filesystem {} ({})", location, file);
+        }
         DATA.put(key, parseRootXml(file));
     }
 
@@ -214,7 +243,9 @@ public final class XmlParser
     {
         ResourceLocation key = Helper.normalize(location);
         if (DATA.containsKey(key))
+        {
             throw new IllegalArgumentException("Duplicate ResourceLocation location. This is not allowed.");
+        }
         RELOAD_LIST.add(location);
         DATA.put(key, parseRootXml(location));
     }
@@ -243,7 +274,10 @@ public final class XmlParser
         for (Map.Entry<ResourceLocation, Root> e : DATA.entrySet())
         {
             sb.append("Location: ").append(e.getKey());
-            if (e.getValue().isOverride()) sb.append("[OVERRIDE]");
+            if (e.getValue().isOverride())
+            {
+                sb.append("[OVERRIDE]");
+            }
             sb.append('\n');
             sb.append(e.getValue()).append('\n');
         }
@@ -272,7 +306,10 @@ public final class XmlParser
             List<File> loadedOverrides = new ArrayList<>();
             for (Map.Entry<ResourceLocation, Root> old : oldMap.entrySet())
             {
-                if (!old.getValue().isOverride()) continue;
+                if (!old.getValue().isOverride())
+                {
+                    continue;
+                }
                 File f = new File(old.getValue().getSource());
                 if (f.exists())
                 {

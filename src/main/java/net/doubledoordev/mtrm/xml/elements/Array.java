@@ -30,6 +30,7 @@
 
 package net.doubledoordev.mtrm.xml.elements;
 
+import net.doubledoordev.mtrm.client.elements.ArrayElement;
 import net.doubledoordev.mtrm.client.elements.GuiElement;
 import net.doubledoordev.mtrm.xml.XmlParser;
 import org.w3c.dom.Element;
@@ -46,6 +47,7 @@ public class Array implements XmlParser.IStringObject
     public final int min;
     public final int max;
     public final boolean optional;
+    public final int dim;
 
     public Array(Element node) throws Exception
     {
@@ -59,18 +61,48 @@ public class Array implements XmlParser.IStringObject
         for (int i = 0; i < list.getLength(); i++)
         {
             Node child = list.item(i);
-            if (child.getNodeType() != Node.ELEMENT_NODE) continue;
+            if (child.getNodeType() != Node.ELEMENT_NODE)
+            {
+                continue;
+            }
 
-            if (component != null) throw new IllegalArgumentException("You can't have multiple components per array.");
+            if (component != null)
+            {
+                throw new IllegalArgumentException("You can't have multiple components per array.");
+            }
 
             XmlParser.IElementObject childObj = XmlParser.parse(child);
             if (!(childObj instanceof XmlParser.IStringObject))
+            {
                 throw new IllegalArgumentException("Node object not a string replaceable.");
+            }
 
             component = (XmlParser.IStringObject) childObj;
         }
+        if (component == null)
+        {
+            throw new IllegalArgumentException("Empty array.");
+        }
 
-        if (component == null) throw new IllegalArgumentException("Empty array.");
+        if (component instanceof Array)
+        {
+            Array sub = ((Array) component);
+            dim = sub.dim + 1;
+
+            // todo: remove this contraint?
+            if (!(sub.component instanceof Slot || sub.component instanceof Oredict))
+            {
+                throw new IllegalArgumentException("MTRM only supports 2d arrays of Items or Oredicts");
+            }
+            if (dim > 2)
+            {
+                throw new IllegalArgumentException("MTRM doesn't support more than 2 dimensions to an array.");
+            }
+        }
+        else
+        {
+            dim = 1;
+        }
 
         this.component = component;
     }
@@ -95,7 +127,7 @@ public class Array implements XmlParser.IStringObject
     @Override
     public GuiElement toGuiElement(GuiElement.GuiElementCallback callback)
     {
-        return null; // todo
+        return new ArrayElement(callback, optional, component, min, max, dim);
     }
 
     public static class InstanceCreator implements XmlParser.IInstanceCreator<Array>

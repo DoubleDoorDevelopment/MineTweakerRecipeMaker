@@ -57,19 +57,24 @@ public class Function implements XmlParser.IElementObject
             Node node = list.item(i);
             switch (node.getNodeType())
             {
-                default:
-                    System.out.println("Ignored node: " + node);
-                    break;
-                case Node.TEXT_NODE:
-                    String str = node.getTextContent().trim();
-                    if (!str.isEmpty()) parts.add(str);
-                    break;
-                case Node.ELEMENT_NODE:
-                    XmlParser.IElementObject child = XmlParser.parse(node);
-                    if (!(child instanceof XmlParser.IStringObject))
-                        throw new IllegalArgumentException("Child of unknown type in '" + name + "': " + node);
-                    parts.add(child);
-                    break;
+            default:
+                System.out.println("Ignored node: " + node);
+                break;
+            case Node.TEXT_NODE:
+                String str = node.getTextContent().trim();
+                if (!str.isEmpty())
+                {
+                    parts.add(str);
+                }
+                break;
+            case Node.ELEMENT_NODE:
+                XmlParser.IElementObject child = XmlParser.parse(node);
+                if (!(child instanceof XmlParser.IStringObject))
+                {
+                    throw new IllegalArgumentException("Child of unknown type in '" + name + "': " + node);
+                }
+                parts.add(child);
+                break;
             }
         }
         this.parts = parts.build();
@@ -84,9 +89,18 @@ public class Function implements XmlParser.IElementObject
         for (int i = 0; i < parts.size(); i++)
         {
             Object o = parts.get(i);
-            if (o instanceof String) sb.append('\'').append(o).append('\'');
-            else sb.append(o);
-            if (i + 1 < parts.size()) sb.append(", ");
+            if (o instanceof String)
+            {
+                sb.append('\'').append(o).append('\'');
+            }
+            else
+            {
+                sb.append(o);
+            }
+            if (i + 1 < parts.size())
+            {
+                sb.append(", ");
+            }
         }
         sb.append("]}");
         return sb.toString();

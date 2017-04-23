@@ -30,54 +30,96 @@
 
 package net.doubledoordev.mtrm.client.elements;
 
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
+import net.doubledoordev.mtrm.xml.XmlParser;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Dries007
  */
-public class StringElement extends GuiElement
+public class ArrayElement extends GuiElement implements GuiElement.GuiElementCallback
 {
-    private final String string;
-    private final int color;
-    private final FontRenderer fontRendererObj;
+    private final XmlParser.IStringObject component;
+    private final int min;
+    private final int max;
+    private final int dim;
+    private final List<GuiElement> subs = new ArrayList<>();
 
-    public StringElement(GuiElementCallback callback, String string)
+    public ArrayElement(GuiElementCallback callback, boolean optional, XmlParser.IStringObject component, int min, int max, int dim)
     {
-        this(callback, string, 0x000000);
-    }
+        super(callback, optional);
+        this.component = component;
+        this.min = min;
+        this.max = max;
+        this.dim = dim;
 
-    public StringElement(GuiElementCallback callback, String string, int color)
-    {
-        super(callback, false);
-        this.string = string;
-        this.color = color;
-        fontRendererObj = mc.fontRendererObj;
+        for (int i = 0; i < min; i++)
+        {
+            subs.add(component.toGuiElement(this));
+        }
     }
 
     @Override
     public void initGui()
     {
-        height = 1 + fontRendererObj.listFormattedStringToWidth(string, width).size() * fontRendererObj.FONT_HEIGHT;
+
     }
 
     @Override
     public String save()
     {
-        return string;
+        final int lastIndex = subs.size() - 1;
+        // Arbitrary guess of avg element size, only real reason to use this over Arrays.toString(String[])
+        StringBuilder sb = new StringBuilder(50 * dim * lastIndex);
+        for (int i = 0; ; i++)
+        {
+            sb.append(subs.get(i).save());
+            if (i == lastIndex)
+            {
+                return sb.append(']').toString();
+            }
+            sb.append(", ");
+        }
     }
 
     @Override
     public void draw(int mouseX, int mouseY, float partialTicks)
     {
-        GlStateManager.enableAlpha();
-        fontRendererObj.drawSplitString(string, posX, posY + 1, maxWidth, color);
+
     }
 
     @Override
-    public void setSize(int width, int height)
+    public boolean isValid()
     {
-        super.setSize(width, height);
-        initGui();
+        if (!super.isValid())
+        {
+            return false;
+        }
+        if (subs.size() < min && subs.size() > max)
+        {
+            return false;
+        }
+        for (GuiElement sub : subs)
+        {
+            if (!sub.isValid())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void resizeCallback(@Nullable GuiElement element)
+    {
+
+    }
+
+    @Override
+    public void updateButtons(@Nullable GuiElement element)
+    {
+
     }
 }

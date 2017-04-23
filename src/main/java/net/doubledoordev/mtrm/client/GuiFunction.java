@@ -67,8 +67,14 @@ public class GuiFunction extends GuiListBase implements GuiElement.GuiElementCal
                 XmlParser.IStringObject sObj = (XmlParser.IStringObject) obj;
                 textBuilder.append(sObj.toHumanText());
                 GuiElement e = sObj.toGuiElement(this);
-                if (e != null) guiElements.add(e);
-                else guiElements.add(new StringElement(this, sObj.toHumanText(), 0xFF0000));
+                if (e != null)
+                {
+                    guiElements.add(e);
+                }
+                else
+                {
+                    guiElements.add(new StringElement(this, sObj.toHumanText(), 0xFF0000));
+                }
             }
             textBuilder.append(' ');
         }
@@ -77,27 +83,22 @@ public class GuiFunction extends GuiListBase implements GuiElement.GuiElementCal
     }
 
     @Override
-    public void initGui()
-    {
-        super.initGui();
-        changes = true;
-    }
-
-    @Override
     public void updateScreen()
     {
         super.updateScreen();
         StringBuilder sb = new StringBuilder();
-        for (GuiElement obj : guiElements) sb.append(obj.save());
+        for (GuiElement obj : guiElements)
+        {
+            sb.append(obj.save());
+        }
         currentText = sb.toString();
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+    public void initGui()
     {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-
-        fontRendererObj.drawString(function.name, guiLeft + xSize / 2 - fontRendererObj.getStringWidth(function.name) / 2, guiTop - 10, 0xFFFFFF);
+        super.initGui();
+        changes = true;
     }
 
     @Override
@@ -112,6 +113,14 @@ public class GuiFunction extends GuiListBase implements GuiElement.GuiElementCal
         fontRendererObj.drawString("Current", xSize + 25, -100, 0xFF5050);
         fontRendererObj.drawSplitString(currentText, xSize + 25, -90, 200, 0xFFFFFF);
         // debug end
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+    {
+        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+
+        fontRendererObj.drawString(function.name, guiLeft + xSize / 2 - fontRendererObj.getStringWidth(function.name) / 2, guiTop - 10, 0xFFFFFF);
     }
 
     @Override
@@ -131,12 +140,18 @@ public class GuiFunction extends GuiListBase implements GuiElement.GuiElementCal
     {
         switch (id)
         {
-            case ID_SAVE:
-                if (result) confirm_ok();
-                else this.mc.displayGuiScreen(this);
-                break;
-            default:
-                super.confirmClicked(result, id);
+        case ID_SAVE:
+            if (result)
+            {
+                confirm_ok();
+            }
+            else
+            {
+                this.mc.displayGuiScreen(this);
+            }
+            break;
+        default:
+            super.confirmClicked(result, id);
         }
     }
 

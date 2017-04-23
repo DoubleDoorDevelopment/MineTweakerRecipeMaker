@@ -31,7 +31,7 @@
 package net.doubledoordev.mtrm.xml.elements;
 
 import net.doubledoordev.mtrm.client.elements.GuiElement;
-import net.doubledoordev.mtrm.client.elements.SlotElement;
+import net.doubledoordev.mtrm.client.elements.OredictElement;
 import net.doubledoordev.mtrm.xml.XmlParser;
 import org.w3c.dom.Element;
 
@@ -68,7 +68,7 @@ public class Oredict implements XmlParser.IStringObject
     @Override
     public GuiElement toGuiElement(GuiElement.GuiElementCallback callback)
     {
-        return new SlotElement(callback, optional, Slot.Type.INGREDIENT, false, false, true, stacksize, true);
+        return new OredictElement(callback, optional, stacksize);
     }
 
     public static class InstanceCreator implements XmlParser.IInstanceCreator<Oredict>

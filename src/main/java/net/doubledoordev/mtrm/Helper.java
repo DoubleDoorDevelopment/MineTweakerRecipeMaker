@@ -105,12 +105,21 @@ public final class Helper
      */
     public static List<File> findXMLFiles(File folder, List<File> list)
     {
-        if (!folder.isDirectory()) throw new IllegalArgumentException(folder + " is not a directory.");
+        if (!folder.isDirectory())
+        {
+            throw new IllegalArgumentException(folder + " is not a directory.");
+        }
         //noinspection ConstantConditions
         for (File file : folder.listFiles(FILE_FILTER_XML))
         {
-            if (file.isDirectory()) findXMLFiles(file, list);
-            else list.add(file);
+            if (file.isDirectory())
+            {
+                findXMLFiles(file, list);
+            }
+            else
+            {
+                list.add(file);
+            }
         }
         return list;
     }
@@ -138,18 +147,30 @@ public final class Helper
     public static ResourceLocation normalize(ResourceLocation location)
     {
         String path = location.getResourcePath();
-        if (path.startsWith("assets/")) path = path.substring(path.indexOf('/'));
-        if (path.endsWith(".xml") || path.endsWith(".XML")) path = path.substring(0, path.lastIndexOf('.'));
+        if (path.startsWith("assets/"))
+        {
+            path = path.substring(path.indexOf('/'));
+        }
+        if (path.endsWith(".xml") || path.endsWith(".XML"))
+        {
+            path = path.substring(0, path.lastIndexOf('.'));
+        }
         return new ResourceLocation(location.getResourceDomain(), path);
     }
 
     public static void loadOverrides(List<File> skip) throws Exception
     {
         File modFolder = new File(Loader.instance().getConfigDir(), Helper.MODID);
-        if (!modFolder.exists()) modFolder.mkdirs();
+        if (!modFolder.exists())
+        {
+            modFolder.mkdirs();
+        }
         Helper.makeReadme(new File(modFolder, "README.txt"));
         File rootFolder = new File(modFolder, "overrides");
-        if (!rootFolder.exists()) rootFolder.mkdirs();
+        if (!rootFolder.exists())
+        {
+            rootFolder.mkdirs();
+        }
         Path root = rootFolder.toPath();
         List<File> list = Helper.findXMLFiles(rootFolder, new ArrayList<File>());
         list.removeAll(skip);
@@ -167,13 +188,22 @@ public final class Helper
 
     public static String itemstackToString(ItemStack stack)
     {
-        if (stack == null) return "null";
+        if (stack == null)
+        {
+            return "null";
+        }
         StringBuilder sb = new StringBuilder("<");
         sb.append(stack.getItem().getRegistryName());
         int meta = stack.getMetadata();
-        if (meta != 0) sb.append(meta);
+        if (meta != 0)
+        {
+            sb.append(meta);
+        }
         sb.append('>');
-        if (stack.stackSize != 1) sb.append('*').append(stack.stackSize);
+        if (stack.stackSize != 1)
+        {
+            sb.append('*').append(stack.stackSize);
+        }
         return sb.toString();
     }
 

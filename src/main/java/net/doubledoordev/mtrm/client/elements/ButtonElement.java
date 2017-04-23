@@ -72,16 +72,16 @@ public abstract class ButtonElement extends GuiElement
     protected abstract void onClick();
 
     @Override
-    public String save()
-    {
-        return null;
-    }
-
-    @Override
     public void initGui()
     {
         this.height = defaultHeight;
         setDisplayText(displayTextOriginal);
+    }
+
+    @Override
+    public String save()
+    {
+        return null;
     }
 
     /**
@@ -113,13 +113,6 @@ public abstract class ButtonElement extends GuiElement
         drawCenteredString(fontRendererObj, displayText, posX + width / 2, posY + (height - 8) / 2, TEXT_COLORS[state]);
     }
 
-    public ArrayList<String> getHoverLines()
-    {
-        ArrayList<String> list = new ArrayList<>();
-        if (displayText.length() != displayTextOriginal.length()) list.add(displayTextOriginal);
-        return list;
-    }
-
     @Override
     public void drawHover(int mouseX, int mouseY, int maxWidth, int maxHeight)
     {
@@ -141,11 +134,6 @@ public abstract class ButtonElement extends GuiElement
         }
     }
 
-    protected void playSound()
-    {
-        mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-    }
-
     @Override
     public boolean keyTyped(char typedChar, int keyCode)
     {
@@ -159,11 +147,31 @@ public abstract class ButtonElement extends GuiElement
         setDisplayText(displayTextOriginal);
     }
 
+    public ArrayList<String> getHoverLines()
+    {
+        ArrayList<String> list = new ArrayList<>();
+        if (displayText.length() != displayTextOriginal.length())
+        {
+            list.add(displayTextOriginal);
+        }
+        return list;
+    }
+
+    protected void playSound()
+    {
+        mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+    }
+
     public void setDisplayText(String target)
     {
         displayTextOriginal = target;
         if (fontRendererObj.getStringWidth(target) > width - 10)
+        {
             displayText = ClientHelper.split(fontRendererObj, target, width - 10, 1).get(0);
-        else displayText = displayTextOriginal;
+        }
+        else
+        {
+            displayText = displayTextOriginal;
+        }
     }
 }

@@ -61,16 +61,16 @@
 
     <!-- Ore dictionary. Weight 500 -->
     <function name="Add to ore dictionary entry" weight="500">
-        <oredictAllowed/>.add(<slot type="item" metaWildcardAllowed="true"/>);
+        <oredict/>.add(<slot type="item" metaWildcardAllowed="true"/>);
     </function>
     <function name="Remove from ore dictionary entry" weight="500">
-        <oredictAllowed/>.add(<slot type="item" metaWildcardAllowed="true"/>);
+        <oredict/>.add(<slot type="item" metaWildcardAllowed="true"/>);
     </function>
     <function name="Mirror ore dictionary to another" weight="500">
-        <oredictAllowed/>.mirror(<oredictAllowed/>);
+        <oredict/>.mirror(<oredict/>);
     </function>
     <function name="Add all ore dictionary entries to another" weight="500">
-        <oredictAllowed/>.addAll(<oredictAllowed/>);
+        <oredict/>.addAll(<oredict/>);
     </function>
 
     <!-- Crafting -->

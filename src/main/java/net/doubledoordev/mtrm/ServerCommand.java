@@ -51,12 +51,6 @@ public class ServerCommand extends CommandBase
     }
 
     @Override
-    public List<String> getCommandAliases()
-    {
-        return Collections.singletonList("mtrm");
-    }
-
-    @Override
     public String getCommandUsage(ICommandSender sender)
     {
         return "/mtrm";
@@ -67,5 +61,11 @@ public class ServerCommand extends CommandBase
     {
         EntityPlayerMP player = getCommandSenderAsPlayer(sender);
         player.openGui(MineTweakerRecipeMaker.instance, 0, sender.getEntityWorld(), 0, 0, 0);
+    }
+
+    @Override
+    public List<String> getCommandAliases()
+    {
+        return Collections.singletonList("mtrm");
     }
 }

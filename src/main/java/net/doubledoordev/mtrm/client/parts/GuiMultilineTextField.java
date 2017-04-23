@@ -54,9 +54,63 @@ public class GuiMultilineTextField extends GuiTextField
         setMaxStringLength(Integer.MAX_VALUE / 2);
     }
 
+    private void recomputeLines()
+    {
+        lines = fr.listFormattedStringToWidth(text, width - 8);
+        int chars = 0;
+        for (int i = 0; i < lines.size(); i++)
+        {
+            String line = lines.get(i);
+            chars += line.length();
+            if (text.length() > chars && text.charAt(chars) == ' ')
+            {
+                lines.set(i, line + ' ');
+                chars++;
+            }
+        }
+        if (!needsScrolling())
+        {
+            setScroll(0);
+        }
+    }
+
+    public boolean needsScrolling()
+    {
+        return lines.size() > (height - (enableBackgroundDrawing ? 8 : 0)) / fr.FONT_HEIGHT;
+    }
+
+    public void setScroll(float scroll)
+    {
+        this.scroll = scroll;
+    }
+
+    @Override
+    public void setText(String textIn)
+    {
+        super.setText(textIn);
+        recomputeLines();
+    }
+
+    @Override
+    public void writeText(String textToWrite)
+    {
+        super.writeText(textToWrite);
+        recomputeLines();
+    }
+
+    @Override
+    public void deleteFromCursor(int num)
+    {
+        super.deleteFromCursor(num);
+        recomputeLines();
+    }
+
     public void drawTextBox()
     {
-        if (!visible) return;
+        if (!visible)
+        {
+            return;
+        }
 
         if (enableBackgroundDrawing)
         {
@@ -100,7 +154,10 @@ public class GuiMultilineTextField extends GuiTextField
             if (selected)
             {
                 int subSelectionEnd = Math.min(length, selectionEnd - chars);
-                if (subSelectionEnd < length) selected = false;
+                if (subSelectionEnd < length)
+                {
+                    selected = false;
+                }
 
                 int offsetL = fontRendererInstance.getStringWidth(line.substring(0, subSelectionStart));
                 int offsetR = fontRendererInstance.getStringWidth(line.substring(0, subSelectionEnd));
@@ -134,54 +191,6 @@ public class GuiMultilineTextField extends GuiTextField
             chars += length;
             y += fr.FONT_HEIGHT;
         }
-    }
-
-    private void recomputeLines()
-    {
-        lines = fr.listFormattedStringToWidth(text, width - 8);
-        int chars = 0;
-        for (int i = 0; i < lines.size(); i++)
-        {
-            String line = lines.get(i);
-            chars += line.length();
-            if (text.length() > chars && text.charAt(chars) == ' ')
-            {
-                lines.set(i, line + ' ');
-                chars++;
-            }
-        }
-        if (!needsScrolling()) setScroll(0);
-    }
-
-    public boolean needsScrolling()
-    {
-        return lines.size() > (height - (enableBackgroundDrawing ? 8 : 0)) / fr.FONT_HEIGHT;
-    }
-
-    public void setScroll(float scroll)
-    {
-        this.scroll = scroll;
-    }
-
-    @Override
-    public void setText(String textIn)
-    {
-        super.setText(textIn);
-        recomputeLines();
-    }
-
-    @Override
-    public void writeText(String textToWrite)
-    {
-        super.writeText(textToWrite);
-        recomputeLines();
-    }
-
-    @Override
-    public void deleteFromCursor(int num)
-    {
-        super.deleteFromCursor(num);
-        recomputeLines();
     }
 
     @Override

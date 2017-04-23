@@ -33,16 +33,16 @@
     <!ATTLIST MTRM name CDATA #REQUIRED><!-- Name for this file. (human readable) -->
     <!ATTLIST MTRM version CDATA #REQUIRED><!-- Internal version. Currently unused. -->
     <!ATTLIST MTRM protocol CDATA #FIXED "1.0"><!-- Protocol version. -->
-    <!ELEMENT function (#PCDATA|slot|array|oredictAllowed|number|nbt|string)*><!-- A function call (can technically be anything is displayText in a script file) -->
+    <!ELEMENT function (#PCDATA|slot|array|oredict|number|nbt|string)*><!-- A function call (can technically be anything is displayText in a script file) -->
         <!ATTLIST function name CDATA #REQUIRED><!-- Name for this function. (human readable) -->
         <!ATTLIST function weight CDATA #REQUIRED><!-- Position in the script file. Please use increments of 10! (see vanilla.xml) -->
-    <!ELEMENT modifier (#PCDATA|slot|array|oredictAllowed|number|nbt|string)*><!-- A modifier that can be applies to an object -->
+    <!ELEMENT modifier (#PCDATA|slot|array|oredict|number|nbt|string)*><!-- A modifier that can be applies to an object -->
         <!ATTLIST modifier name CDATA #REQUIRED><!-- Name for this modifier. (human readable) -->
         <!ATTLIST modifier in (item|ingredient) "item"><!-- The input type -->
         <!ATTLIST modifier out (item|ingredient) "ingredient"><!-- The output type -->
 
     <!-- Reset indentation because these are used by multiple upper elements -->
-    <!ELEMENT array (array|slot|oredictAllowed|number|nbt|string)> <!-- An array of ...-->
+    <!ELEMENT array (array|slot|oredict|number|nbt|string)> <!-- An array of ...-->
         <!ATTLIST array optional (true|false) "false"><!-- true if value can be null -->
         <!ATTLIST array min CDATA "1"><!-- Minimum amount of objects -->
         <!ATTLIST array max CDATA #REQUIRED><!-- Maximum amount of objects -->
@@ -56,8 +56,8 @@
         <!ATTLIST number min CDATA "0"><!-- Minimum value -->
         <!ATTLIST number max CDATA #IMPLIED><!-- Maximal value. Default is 32767 (max short) -->
         <!ATTLIST number default CDATA #IMPLIED><!-- Default value, if not present, minimum will be used -->
-    <!ELEMENT oredictAllowed EMPTY><!-- For when object MUST be an ore dictionary entry -->
-        <!ATTLIST oredictAllowed optional (true|false) "false"><!-- true if value can be null -->
+    <!ELEMENT oredict EMPTY><!-- For when object MUST be an ore dictionary entry -->
+        <!ATTLIST oredict optional (true|false) "false"><!-- true if value can be null -->
         <!ATTLIST stacksizeAllowed stacksizeAllowed (true|false) "false"><!-- true if there can be a stacksizeAllowed -->
     <!ELEMENT slot EMPTY><!-- A (Item or Ingredient) Slot -->
         <!--

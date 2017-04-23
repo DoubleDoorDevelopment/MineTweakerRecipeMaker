@@ -55,7 +55,10 @@ public class NumberElement extends StringInputElement
         this.max = max;
         this.value = min;
         this.stepsize = stepsize;
-        if (stepsize == 0) this.format = "%f";
+        if (stepsize == 0)
+        {
+            this.format = "%f";
+        }
         else
         {
             int i = 0;
@@ -83,31 +86,65 @@ public class NumberElement extends StringInputElement
     }
 
     @Override
-    public void setFocus(boolean focus)
-    {
-        validate();
-        if (!focus) text = save();
-        super.setFocus(focus);
-    }
-
-    @Override
-    public void initGui()
-    {
-        super.initGui();
-        validate();
-    }
-
-    @Override
-    public void setEnabled(boolean enabled)
-    {
-        super.setEnabled(enabled);
-        validate();
-    }
-
-    @Override
     public String save()
     {
         return String.format(Locale.ROOT, format, value);
+    }
+
+    @Override
+    public boolean keyTyped(char typedChar, int keyCode)
+    {
+        if (GuiScreen.isKeyComboCtrlV(keyCode) || typedChar == 22)
+        {
+            text = GuiScreen.getClipboardString();
+        }
+        else if (GuiScreen.isCtrlKeyDown())
+        {
+            return false;
+        }
+        else
+        {
+            switch (keyCode)
+            {
+            case Keyboard.KEY_ESCAPE:
+                return false;
+            case Keyboard.KEY_NUMPADENTER:
+            case Keyboard.KEY_RETURN:
+                setFocus(false);
+                break;
+            case Keyboard.KEY_BACK:
+                int len = text.length();
+                if (len > 0)
+                {
+                    text = text.substring(0, len - 1);
+                }
+                break;
+            case Keyboard.KEY_DELETE:
+                text = "0";
+                break;
+            default:
+                switch (typedChar)
+                {
+                case '-':
+                case '.':
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    text += typedChar;
+                default:
+                    return false;
+                }
+            }
+        }
+        validate();
+        return true;
     }
 
     public ArrayList<String> getHoverLines()
@@ -120,56 +157,33 @@ public class NumberElement extends StringInputElement
     }
 
     @Override
-    public boolean keyTyped(char typedChar, int keyCode)
+    public void setFocus(boolean focus)
     {
-        if (GuiScreen.isKeyComboCtrlV(keyCode) || typedChar == 22) text = GuiScreen.getClipboardString();
-        else if (GuiScreen.isCtrlKeyDown()) return false;
-        else
-        {
-            switch (keyCode)
-            {
-                case Keyboard.KEY_ESCAPE:
-                    return false;
-                case Keyboard.KEY_NUMPADENTER:
-                case Keyboard.KEY_RETURN:
-                    setFocus(false);
-                    break;
-                case Keyboard.KEY_BACK:
-                    int len = text.length();
-                    if (len > 0) text = text.substring(0, len - 1);
-                    break;
-                case Keyboard.KEY_DELETE:
-                    text = "0";
-                    break;
-                default:
-                    switch (typedChar)
-                    {
-                        case '-':
-                        case '.':
-                        case '0':
-                        case '1':
-                        case '2':
-                        case '3':
-                        case '4':
-                        case '5':
-                        case '6':
-                        case '7':
-                        case '8':
-                        case '9':
-                            text += typedChar;
-                        default:
-                            return false;
-                    }
-            }
-        }
         validate();
-        return true;
+        if (!focus)
+        {
+            text = save();
+        }
+        super.setFocus(focus);
+    }
+
+    @Override
+    public void initGui()
+    {
+        super.initGui();
+        validate();
     }
 
     @Override
     public boolean isValid()
     {
-        if (!enabled) return optional;
-        return !error && value >= min && value <= max;
+        return super.isValid() && !error && value >= min && value <= max;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled)
+    {
+        super.setEnabled(enabled);
+        validate();
     }
 }

@@ -63,7 +63,10 @@ public class GuiMain extends GuiListBase
 
     private void load(boolean reload)
     {
-        if (reload) XmlParser.reload();
+        if (reload)
+        {
+            XmlParser.reload();
+        }
         List<Root> roots = XmlParser.getLoadedRootXmls();
         guiElements.clear();
         for (final Root root : roots)
@@ -80,14 +83,20 @@ public class GuiMain extends GuiListBase
                 public ArrayList<String> getHoverLines()
                 {
                     ArrayList<String> list = super.getHoverLines();
-                    if (root.isOverride()) list.add(TextFormatting.RED + "Override");
+                    if (root.isOverride())
+                    {
+                        list.add(TextFormatting.RED + "Override");
+                    }
                     return list;
                 }
             });
         }
         if (reload)
         {
-            for (GuiElement obj : guiElements) obj.initGui(listSizeX);
+            for (GuiElement obj : guiElements)
+            {
+                obj.initGui(listSizeX);
+            }
             doListCalculations();
         }
     }
@@ -186,20 +195,6 @@ public class GuiMain extends GuiListBase
 //    }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException
-    {
-        super.actionPerformed(button);
-
-        switch (button.id)
-        {
-            case BTN_RELOAD:
-                load(true);
-                break;
-// todo            case BTN_EDIT: this.mc.displayGuiScreen(new GuiList()); break;
-        }
-    }
-
-    @Override
     protected void exit()
     {
         this.mc.displayGuiScreen(null);
@@ -209,5 +204,19 @@ public class GuiMain extends GuiListBase
     protected void ok()
     {
 
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException
+    {
+        super.actionPerformed(button);
+
+        switch (button.id)
+        {
+        case BTN_RELOAD:
+            load(true);
+            break;
+// todo            case BTN_EDIT: this.mc.displayGuiScreen(new GuiList()); break;
+        }
     }
 }

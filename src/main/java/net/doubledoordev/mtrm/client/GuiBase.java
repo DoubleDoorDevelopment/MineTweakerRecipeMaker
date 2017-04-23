@@ -84,6 +84,29 @@ public abstract class GuiBase extends GuiContainer
     protected abstract void scrolled();
 
     @Override
+    public void initGui()
+    {
+        super.initGui();
+
+        Keyboard.enableRepeatEvents(true);
+
+        guiLeft = (width - xSize) / 2;
+        guiTop = (height - ySize) / 2;
+
+        buttonList.clear();
+
+        buttonList.add(btnOk = new GuiIconButton(BTN_OK, guiLeft + xSize, guiTop, "Ok", Icon.CHECK));
+        buttonList.add(btnCancel = new GuiIconButton(BTN_CANCEL, guiLeft + xSize, guiTop + 20, "Cancel", Icon.CROSS));
+        btnOk.enabled = false;
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
+    {
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    }
+
+    @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
     {
         mc.getTextureManager().bindTexture(INVENTORY);
@@ -122,26 +145,50 @@ public abstract class GuiBase extends GuiContainer
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
+    protected void keyTyped(char typedChar, int keyCode)
     {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+        if (keyCode == Keyboard.KEY_ESCAPE)
+        {
+            if (changes)
+            {
+                confirmExit();
+            }
+            else
+            {
+                exit();
+            }
+        }
+    }
+
+    protected void confirmExit()
+    {
+        mc.displayGuiScreen(new GuiYesNo(this, "Are you sure you want to leave?", "Changes won't be saved!", ID_CANCEL));
     }
 
     @Override
-    public void initGui()
+    protected void actionPerformed(GuiButton button) throws IOException
     {
-        super.initGui();
-
-        Keyboard.enableRepeatEvents(true);
-
-        guiLeft = (width - xSize) / 2;
-        guiTop = (height - ySize) / 2;
-
-        buttonList.clear();
-
-        buttonList.add(btnOk = new GuiIconButton(BTN_OK, guiLeft + xSize, guiTop, "Ok", Icon.CHECK));
-        buttonList.add(btnCancel = new GuiIconButton(BTN_CANCEL, guiLeft + xSize, guiTop + 20, "Cancel", Icon.CROSS));
-        btnOk.enabled = false;
+        if (!button.enabled)
+        {
+            return;
+        }
+        switch (button.id)
+        {
+        case BTN_OK:
+            changes = false;
+            ok();
+            break;
+        case BTN_CANCEL:
+            if (changes)
+            {
+                confirmExit();
+            }
+            else
+            {
+                exit();
+            }
+            break;
+        }
     }
 
     @Override
@@ -152,8 +199,14 @@ public abstract class GuiBase extends GuiContainer
 
         if (i != 0 && this.needsScrolling())
         {
-            if (i > 0) i = 1;
-            if (i < 0) i = -1;
+            if (i > 0)
+            {
+                i = 1;
+            }
+            if (i < 0)
+            {
+                i = -1;
+            }
 
             currentScroll = (currentScroll - i / 75.0f);
             currentScroll = MathHelper.clamp_float(currentScroll, 0.0F, 1.0F);
@@ -161,49 +214,23 @@ public abstract class GuiBase extends GuiContainer
         }
     }
 
-    protected void confirmExit()
-    {
-        mc.displayGuiScreen(new GuiYesNo(this, "Are you sure you want to leave?", "Changes won't be saved!", ID_CANCEL));
-    }
-
     @Override
     public void confirmClicked(boolean result, int id)
     {
         switch (id)
         {
-            case ID_CANCEL:
-                if (result) exit();
-                else mc.displayGuiScreen(this);
-                break;
-            default:
-                super.confirmClicked(result, id);
-        }
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode)
-    {
-        if (keyCode == Keyboard.KEY_ESCAPE)
-        {
-            if (changes) confirmExit();
-            else exit();
-        }
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException
-    {
-        if (!button.enabled) return;
-        switch (button.id)
-        {
-            case BTN_OK:
-                changes = false;
-                ok();
-                break;
-            case BTN_CANCEL:
-                if (changes) confirmExit();
-                else exit();
-                break;
+        case ID_CANCEL:
+            if (result)
+            {
+                exit();
+            }
+            else
+            {
+                mc.displayGuiScreen(this);
+            }
+            break;
+        default:
+            super.confirmClicked(result, id);
         }
     }
 }

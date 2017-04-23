@@ -58,12 +58,24 @@ public class Root implements XmlParser.IElementObject
         for (int i = 0; i < list.getLength(); i++)
         {
             Node child = list.item(i);
-            if (child.getNodeType() != Node.ELEMENT_NODE) continue;
+            if (child.getNodeType() != Node.ELEMENT_NODE)
+            {
+                continue;
+            }
 
             XmlParser.IElementObject childObj = XmlParser.parse(child);
-            if (childObj instanceof Modifier) modifierList.add((Modifier) childObj);
-            else if (childObj instanceof Function) functionList.add((Function) childObj);
-            else throw new IllegalArgumentException("Node object not Modifier or Function");
+            if (childObj instanceof Modifier)
+            {
+                modifierList.add((Modifier) childObj);
+            }
+            else if (childObj instanceof Function)
+            {
+                functionList.add((Function) childObj);
+            }
+            else
+            {
+                throw new IllegalArgumentException("Node object not Modifier or Function");
+            }
         }
     }
 
@@ -73,9 +85,15 @@ public class Root implements XmlParser.IElementObject
         StringBuilder s = new StringBuilder();
         s.append("Source: ").append(source).append('\n');
         s.append("ModifierList: \n");
-        for (Modifier modifier : modifierList) s.append(modifier).append('\n');
+        for (Modifier modifier : modifierList)
+        {
+            s.append(modifier).append('\n');
+        }
         s.append("\nFunctionList: \n");
-        for (Function function : functionList) s.append(function).append('\n');
+        for (Function function : functionList)
+        {
+            s.append(function).append('\n');
+        }
         s.append('\n');
         return s.toString();
     }
@@ -87,13 +105,19 @@ public class Root implements XmlParser.IElementObject
 
     public final void setSource(String source)
     {
-        if (this.source != null) throw new IllegalStateException("Cannot modify source after object creation.");
+        if (this.source != null)
+        {
+            throw new IllegalStateException("Cannot modify source after object creation.");
+        }
         this.source = source;
     }
 
     public boolean isOverride()
     {
-        if (source == null) throw new IllegalStateException("Someone forgot to call setSource!");
+        if (source == null)
+        {
+            throw new IllegalStateException("Someone forgot to call setSource!");
+        }
         return source.charAt(0) != '!';
     }
 
