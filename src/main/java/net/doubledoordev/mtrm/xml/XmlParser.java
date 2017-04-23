@@ -81,7 +81,7 @@ public final class XmlParser
                 public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
                 {
                     InputSource is = null;
-                    if (systemId.contains("MTRM.dtd"))
+                    if (systemId.contains("mtrm.dtd"))
                     {
                         InputStream iss = MineTweakerRecipeMaker.class.getResourceAsStream(Helper.DTD);
                         is = new InputSource(iss);

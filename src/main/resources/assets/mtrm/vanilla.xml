@@ -29,7 +29,7 @@
   ~
   -->
 
-<!DOCTYPE MTRM SYSTEM "MTRM.dtd">
+<!DOCTYPE MTRM SYSTEM "mtrm.dtd">
 <!-- Vanilla specs - 13 sept 2016 - Dries007 -->
 <MTRM version="1" name="Vanilla" protocol="1.0">
     <modifier name="Any damage" out="item">.anyDamage()</modifier>
@@ -53,10 +53,10 @@
         <slot type="item" stacksizeAllowed="false"/>.displayName=<string/>;
     </function>
     <function name="Add tooltip" weight="250">
-        <slot type="ingredient"/>.addTooltip(<string/>);
+        <slot type="item"/>.addTooltip(<string/>);
     </function>
     <function name="Add shift tooltip" weight="250">
-        <slot type="ingredient"/>.addShiftTooltip(<string/>);
+        <slot type="item"/>.addShiftTooltip(<string/>);
     </function>
 
     <!-- Ore dictionary. Weight 500 -->

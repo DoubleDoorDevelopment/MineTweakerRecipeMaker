@@ -1,12 +1,12 @@
 {
   "modListVersion": 2,
   "modList": [{
-    "modid": "${modid}",
-    "name": "${modid}",
+    "modid": "mtrm",
+    "name": "${name}",
     "description": "${description}",
     "version": "${version}",
     "mcversion": "${mcversion}",
-    "url": "https://github.com/${githuborg}/${modid}",
+    "url": "https://github.com/${githuborg}/${name}",
     "updateUrl": "",
     "authorList": [ "Dries007", "Doubledoor team" ],
     "credits": "",

@@ -88,7 +88,7 @@ public class GuiFunction extends GuiListBase implements GuiElement.GuiElementCal
     {
         super.updateScreen();
         StringBuilder sb = new StringBuilder();
-        for (GuiElement obj : guiElements) sb.append(obj.save()).append(' ');
+        for (GuiElement obj : guiElements) sb.append(obj.save());
         currentText = sb.toString();
     }
 

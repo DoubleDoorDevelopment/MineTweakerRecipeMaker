@@ -54,7 +54,7 @@ sourceCompatibility = 1.7
 
 archivesBaseName = 'MineTweakerRecipeMaker'
 def githuborg = 'DoubleDoorDevelopment'
-def description = 'MineTweaker Recipe Maker'
+def description = 'MineTweaker Recipe Maker v2'
 
 minecraft {
     mappings = "stable_26"
@@ -67,7 +67,7 @@ if (System.getenv().BUILD_NUMBER != null) version += "." + System.getenv().BUILD
 processResources {
     from(sourceSets.main.resources.srcDirs) {
         include '**/*.info'
-        expand 'version':project.version, 'mcversion':project.minecraft.version, 'modid':project.archivesBaseName, 'githuborg':githuborg, 'description':description
+        expand 'version':project.version, 'mcversion':project.minecraft.version, 'name':project.archivesBaseName, 'githuborg':githuborg, 'description':description
     }
 
     from(sourceSets.main.resources.srcDirs) {
