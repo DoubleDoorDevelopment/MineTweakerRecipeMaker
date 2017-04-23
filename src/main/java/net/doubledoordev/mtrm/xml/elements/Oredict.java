@@ -28,6 +28,7 @@
 package net.doubledoordev.mtrm.xml.elements;
 
 import net.doubledoordev.mtrm.client.elements.GuiElement;
+import net.doubledoordev.mtrm.client.elements.SlotElement;
 import net.doubledoordev.mtrm.xml.XmlParser;
 import org.w3c.dom.Element;
 
@@ -38,28 +39,33 @@ import org.w3c.dom.Element;
 public class Oredict implements XmlParser.IStringObject
 {
     public final boolean optional;
+    public final boolean stacksize;
 
     public Oredict(Element node)
     {
         this.optional = node.hasAttribute("optional") && Boolean.parseBoolean(node.getAttribute("optional"));
+        this.stacksize = node.hasAttribute("stacksizeAllowed") && Boolean.parseBoolean(node.getAttribute("stacksizeAllowed"));
     }
 
     @Override
     public String toString()
     {
-        return "Oredict{optional=" + optional + '}';
+        return "Oredict{" +
+                "optional=" + optional +
+                ", stacksizeAllowed=" + stacksize +
+                '}';
     }
 
     @Override
     public String toHumanText()
     {
-        return "<oredict>";
+        return "<oredictAllowed>";
     }
 
     @Override
     public GuiElement toGuiElement(GuiElement.GuiElementCallback callback)
     {
-        return null; // todo
+        return new SlotElement(callback, optional, Slot.Type.INGREDIENT, false, false, true, stacksize, true);
     }
 
     public static class InstanceCreator implements XmlParser.IInstanceCreator<Oredict>

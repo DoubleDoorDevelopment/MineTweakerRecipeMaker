@@ -124,7 +124,7 @@ public final class XmlParser
         registerType("nbt", new Nbt.InstanceCreator());
         registerType("string", new ManualString.InstanceCreator());
         registerType("number", new Number.InstanceCreator());
-        registerType("oredict", new Oredict.InstanceCreator());
+        registerType("oredictAllowed", new Oredict.InstanceCreator());
         registerType("slot", new Slot.InstanceCreator());
     }
 

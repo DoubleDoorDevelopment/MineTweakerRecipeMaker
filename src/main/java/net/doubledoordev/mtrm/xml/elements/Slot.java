@@ -49,16 +49,23 @@ public class Slot implements XmlParser.IStringObject
     {
         this.type = Type.valueOf(node.getAttribute("type").toUpperCase());
         this.optional = node.hasAttribute("optional") ? Boolean.parseBoolean(node.getAttribute("optional")) : type == Type.INGREDIENT;
-        this.wildcard = node.hasAttribute("wildcard") ? Boolean.parseBoolean(node.getAttribute("wildcard")) : type == Type.INGREDIENT;
-        this.metawildcard = node.hasAttribute("metawildcard") ? Boolean.parseBoolean(node.getAttribute("metawildcard")) : type == Type.INGREDIENT;
-        this.oredict = node.hasAttribute("oredict") ? Boolean.parseBoolean(node.getAttribute("oredict")) : type == Type.INGREDIENT;
-        this.stacksize = node.hasAttribute("stacksize") ? Boolean.parseBoolean(node.getAttribute("stacksize")) : type == Type.ITEM; // !! default reversed !!
+        this.wildcard = node.hasAttribute("wildcardAllowed") ? Boolean.parseBoolean(node.getAttribute("wildcardAllowed")) : type == Type.INGREDIENT;
+        this.metawildcard = node.hasAttribute("metaWildcardAllowed") ? Boolean.parseBoolean(node.getAttribute("metaWildcardAllowed")) : type == Type.INGREDIENT;
+        this.oredict = node.hasAttribute("oredictAllowed") ? Boolean.parseBoolean(node.getAttribute("oredictAllowed")) : type == Type.INGREDIENT;
+        this.stacksize = node.hasAttribute("stacksizeAllowed") ? Boolean.parseBoolean(node.getAttribute("stacksizeAllowed")) : type == Type.ITEM; // !! default reversed !!
     }
 
     @Override
     public String toString()
     {
-        return "Slot{type=" + type + ", optional=" + optional + ", wildcard=" + wildcard + ", metawildcard=" + metawildcard + ", stacksize=" + stacksize + ", oredict=" + oredict + '}';
+        return "Slot{" +
+                "type=" + type +
+                ", optional=" + optional +
+                ", wildcardAllowed=" + wildcard +
+                ", metaWildcardAllowed=" + metawildcard +
+                ", stacksizeAllowed=" + stacksize +
+                ", oredictAllowed=" + oredict +
+                '}';
     }
 
     @Override
@@ -70,7 +77,7 @@ public class Slot implements XmlParser.IStringObject
     @Override
     public GuiElement toGuiElement(GuiElement.GuiElementCallback callback)
     {
-        return new SlotElement(callback, optional, type, wildcard, metawildcard, oredict, stacksize);
+        return new SlotElement(callback, optional, type, wildcard, metawildcard, oredict, stacksize, false);
     }
 
     public enum Type

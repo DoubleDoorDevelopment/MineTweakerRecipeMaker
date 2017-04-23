@@ -48,7 +48,9 @@ public class Nbt implements XmlParser.IStringObject
     @Override
     public String toString()
     {
-        return "Nbt{}";
+        return "Nbt{" +
+                "optional=" + optional +
+                '}';
     }
 
     @Override

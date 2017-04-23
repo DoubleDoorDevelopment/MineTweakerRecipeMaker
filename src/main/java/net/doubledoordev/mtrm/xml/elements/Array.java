@@ -73,6 +73,17 @@ public class Array implements XmlParser.IStringObject
     }
 
     @Override
+    public String toString()
+    {
+        return "Array{" +
+                "component=" + component +
+                ", min=" + min +
+                ", max=" + max +
+                ", optional=" + optional +
+                '}';
+    }
+
+    @Override
     public String toHumanText()
     {
         return "[" + component.toHumanText() + ']';

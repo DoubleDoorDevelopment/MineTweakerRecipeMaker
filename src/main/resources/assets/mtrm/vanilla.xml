@@ -47,7 +47,7 @@
 
     <!-- Misc item manipulations. Weight 250 -->
     <function name="Set displayName" weight="250">
-        <slot type="item" stacksize="false"/>.displayName=<string/>;
+        <slot type="item" stacksizeAllowed="false"/>.displayName=<string/>;
     </function>
     <function name="Add tooltip" weight="250">
         <slot type="ingredient"/>.addTooltip(<string/>);
@@ -58,16 +58,16 @@
 
     <!-- Ore dictionary. Weight 500 -->
     <function name="Add to ore dictionary entry" weight="500">
-        <oredict/>.add(<slot type="item" metawildcard="true"/>);
+        <oredictAllowed/>.add(<slot type="item" metaWildcardAllowed="true"/>);
     </function>
     <function name="Remove from ore dictionary entry" weight="500">
-        <oredict/>.add(<slot type="item" metawildcard="true"/>);
+        <oredictAllowed/>.add(<slot type="item" metaWildcardAllowed="true"/>);
     </function>
     <function name="Mirror ore dictionary to another" weight="500">
-        <oredict/>.mirror(<oredict/>);
+        <oredictAllowed/>.mirror(<oredictAllowed/>);
     </function>
     <function name="Add all ore dictionary entries to another" weight="500">
-        <oredict/>.addAll(<oredict/>);
+        <oredictAllowed/>.addAll(<oredictAllowed/>);
     </function>
 
     <!-- Crafting -->
@@ -112,17 +112,17 @@
     </function>
     <!-- Misc. Weight 2750 -->
     <function name="Set fuel" weight="2750">
-        furnace.setFuel(<slot type="ingredient" stacksize="false"/>,<number/>);
+        furnace.setFuel(<slot type="ingredient" stacksizeAllowed="false"/>,<number/>);
     </function>
 
-    <!-- Loot tables IDK if / how they work in MT 1.9/1.10, so I'm leavening them out for now;
+    <!-- Loot tables IDK if / how they work in MT 1.9/1.10, so I'm leavening them out for now
     <function name="Remove loot">
-        vanilla.loot.removeChestLoot(<string/>,<slot type="item" wildcard="true" metawildcard="true"/>);
+        vanilla.loot.removeChestLoot(<string/>,<slot type="item" wildcardAllowed="true" metaWildcardAllowed="true"/>);
     </function>
     <function name="Add loot">
         vanilla.loot.addChestLoot(<string/>,<slot type="item"/>.weight(<number max="100"/>));
     </function>
-    <function name="Add loot, with random stacksize">
+    <function name="Add loot, with random stacksizeAllowed">
         vanilla.loot.addChestLoot(<string/>,<slot type="item"/>.weight(<number max="100"/>),<number max="64"/>,<number max="64"/>);
     </function>
     <function name="Remove seeds">

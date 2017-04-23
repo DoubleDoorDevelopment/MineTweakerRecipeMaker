@@ -48,7 +48,9 @@ public class ManualString implements XmlParser.IStringObject
     @Override
     public String toString()
     {
-        return "ManualString{}";
+        return "ManualString{" +
+                "optional=" + optional +
+                '}';
     }
 
     @Override

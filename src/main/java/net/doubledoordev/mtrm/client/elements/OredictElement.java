@@ -33,13 +33,16 @@ import net.minecraft.item.ItemStack;
 import java.util.ArrayList;
 
 /**
+ * todo: wip
  * @author Dries007
  */
 public class OredictElement extends SlotElement
 {
-    public OredictElement(GuiElementCallback callback, boolean optional, Slot.Type type, boolean wildcard, boolean metawildcard, boolean oredict, boolean stacksize)
+    protected ItemStack prevSet = null;
+
+    public OredictElement(GuiElementCallback callback, boolean optional, boolean stacksize)
     {
-        super(callback, optional, type, wildcard, metawildcard, oredict, stacksize);
+        super(callback, optional, Slot.Type.INGREDIENT, false, false, true, stacksize, true);
     }
 
     @Override
@@ -57,7 +60,36 @@ public class OredictElement extends SlotElement
     @Override
     protected void setItemStack(ItemStack input)
     {
-        super.setItemStack(input);
+//        if (input == null)
+//        {
+//            super.setItemStack(null);
+//            return;
+//        }
+//        int[] ids = OreDictionary.getOreIDs(input);
+//        if (ids.length == 0)// is not oredict
+//        {
+//            super.setItemStack(null);
+//            return;
+//        }
+//        if (oredict == null || ids.length == 1) // was previously not set, start with id 0
+//        {
+//            super.setOredict(OreDictionary.getOreName(ids[0]));
+//        }
+//        if (input == prevSet) // Rotate through the list of oredict entries this itemstack has
+//        {
+//
+//            else // find current id, and then set the next, or loop back to 0
+//            {
+//                int i = 0;
+//                while (i < ids.length && !OreDictionary.getOreName(ids[i]).equalsIgnoreCase(oredict)) i++;
+//                if (++i >= ids.length) i = 0; // Increase and if required loop back to 0
+//                super.setOredict(OreDictionary.getOreName(ids[i]));
+//            }
+//        }
+//        else // is new stack
+//        {
+//
+//        }
     }
 
     @Override

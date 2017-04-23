@@ -36,8 +36,10 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static net.doubledoordev.mtrm.client.GuiBase.BASE;
 
@@ -47,21 +49,32 @@ import static net.doubledoordev.mtrm.client.GuiBase.BASE;
 public class SlotElement extends GuiElement
 {
     protected final Slot.Type type;
-    protected final boolean wildcard;
-    protected final boolean metawildcard;
-    protected final boolean oredict;
-    protected final boolean stacksize;
+    protected final boolean wildcardAllowed;
+    protected final boolean metaWildcardAllowed;
+    protected final boolean oredictAllowed;
+    protected final boolean stacksizeAllowed;
+    protected final boolean oredictRequired;
 
     protected ItemStack stack;
 
-    public SlotElement(GuiElementCallback callback, boolean optional, Slot.Type type, boolean wildcard, boolean metawildcard, boolean oredict, boolean stacksize)
+    protected int tickCounter;
+    protected String oredict;
+    protected int oredictCounter;
+    protected List<ItemStack> oredictList;
+    // For looping trough the available list when the same stack is clicked twice.
+    protected ItemStack oredictPrevStack;
+    protected int[] oredictIds;
+    protected int oredictIdCounter;
+
+    public SlotElement(GuiElementCallback callback, boolean optional, Slot.Type type, boolean wildcardAllowed, boolean metaWildcardAllowed, boolean oredictAllowed, boolean stacksizeAllowed, boolean oredictRequired)
     {
         super(callback, optional);
         this.type = type;
-        this.wildcard = wildcard;
-        this.metawildcard = metawildcard;
-        this.oredict = oredict;
-        this.stacksize = stacksize;
+        this.wildcardAllowed = wildcardAllowed;
+        this.metaWildcardAllowed = metaWildcardAllowed;
+        this.oredictAllowed = oredictAllowed;
+        this.stacksizeAllowed = stacksizeAllowed;
+        this.oredictRequired = oredictRequired;
     }
 
     @Override
@@ -88,24 +101,58 @@ public class SlotElement extends GuiElement
         resizeCallback();
     }
 
+    protected void setItemStackOrOredict(ItemStack input)
+    {
+        if (input == null) reset();
+        else if (!oredictAllowed) setItemStack(input);
+        else if (input == oredictPrevStack)
+        {
+            oredictIdCounter++;
+            oredictIdCounter %= oredictIds.length;
+            setOredict(OreDictionary.getOreName(oredictIds[oredictIdCounter]));
+        }
+        else
+        {
+            oredictPrevStack = input;
+            oredictIds = OreDictionary.getOreIDs(input);
+        }
+    }
+
+    /**
+     * Reset
+     */
+    protected void reset()
+    {
+        tickCounter = 0;
+        oredict = null;
+        oredictCounter = 0;
+        oredictList = null;
+        stack = null;
+        updateButtonsCallback();
+    }
+
     protected void setItemStack(ItemStack input)
     {
-        if (input == null)
-        {
-            stack = null;
-            updateButtonsCallback();
-            return;
-        }
+        if (oredictRequired) return; // Shouldn't happen, but you never know
+        reset();
         stack = input.copy();
         stack.setTagCompound(null);
-        if (!stacksize) stack.stackSize = 1;
+        if (!stacksizeAllowed) stack.stackSize = 1;
+        updateButtonsCallback();
+    }
+
+    protected void setOredict(String value)
+    {
+        if (!oredictAllowed) return; // Shouldn't happen, but you never know
+        reset();
+        oredictList = OreDictionary.getOres(value, false);
         updateButtonsCallback();
     }
 
     @Override
     public String save()
     {
-        return Helper.itemstackToString(stack);
+        return (oredict != null) ? String.valueOf(oredict) : Helper.itemstackToString(stack);
     }
 
     @Override
@@ -121,12 +168,13 @@ public class SlotElement extends GuiElement
 
     protected void drawItemStack(ItemStack stack, int x, int y, String altText)
     {
+        if (stack == null) return;
         GlStateManager.translate(0.0F, 0.0F, 32.0F);
         zLevel = 200.0F;
         RenderItem itemRender = mc.getRenderItem();
         itemRender.zLevel = 200.0F;
-        FontRenderer font = null;
-        if (stack != null) font = stack.getItem().getFontRenderer(stack);
+        FontRenderer font = stack.getItem().getFontRenderer(stack);
+        //noinspection ConstantConditions
         if (font == null) font = mc.fontRendererObj;
         itemRender.renderItemAndEffectIntoGUI(stack, x, y);
         itemRender.renderItemOverlayIntoGUI(font, stack, x, y, altText);
@@ -138,6 +186,17 @@ public class SlotElement extends GuiElement
     public void update()
     {
         super.update();
+        if (oredict != null)
+        {
+            if (tickCounter / 6 % 2 == 0)
+            {
+                int stacksize = 0;
+                if (stack != null) stacksize = stack.stackSize;
+                stack = oredictList.get(oredictCounter++ % oredictList.size()).copy();
+                stack.stackSize = stacksize;
+            }
+            tickCounter ++;
+        }
     }
 
     protected ArrayList<String> getHoverLines()
@@ -146,12 +205,13 @@ public class SlotElement extends GuiElement
         list.add(ChatFormatting.AQUA + "Options:");
         list.add("- Type: " + type);
         list.add("- Optional: " + optional);
-        list.add("- Wildcard: " + (wildcard ? "Allowed" : "Not Allowed"));
-        list.add("- Meta Wildcard: " + (metawildcard ? "Allowed" : "Not Allowed"));
-        list.add("- Ore Dictionary: " + (oredict ? "Allowed" : "Not Allowed"));
-        list.add("- Stack size: " + (stacksize ? "Allowed" : "Not Allowed"));
+        list.add("- Wildcard: " + (wildcardAllowed ? "Allowed" : "Not Allowed"));
+        list.add("- Meta Wildcard: " + (metaWildcardAllowed ? "Allowed" : "Not Allowed"));
+        list.add("- Ore Dictionary: " + (oredictAllowed ? "Allowed" : "Not Allowed"));
+        list.add("- Stack size: " + (stacksizeAllowed ? "Allowed" : "Not Allowed"));
         list.add(ChatFormatting.AQUA + "Current value:");
-        if (stack != null) list.addAll(stack.getTooltip(mc.thePlayer, true));
+        if (oredict != null) list.add(oredict);
+        else if (stack != null) list.addAll(stack.getTooltip(mc.thePlayer, true));
         else list.add("null");
         return list;
     }
@@ -168,14 +228,8 @@ public class SlotElement extends GuiElement
     {
         super.onClickOn(mouseX, mouseY, mouseButton);
         ItemStack heldStack = mc.thePlayer.inventory.getItemStack();
-        if (heldStack != null) setItemStack(heldStack);
-        else if (stack != null)
-        {
-            if (mouseButton == 1)
-            {
-                setItemStack(null);
-            }
-        }
+        if (heldStack != null) setItemStackOrOredict(heldStack);
+        else if (stack != null && mouseButton == 1) setItemStackOrOredict(null);
     }
 
     @Override
@@ -195,7 +249,7 @@ public class SlotElement extends GuiElement
     @Override
     public boolean isValid()
     {
-        return stack != null || optional;
+        return oredict != null || stack != null || optional;
     }
 
     @Override

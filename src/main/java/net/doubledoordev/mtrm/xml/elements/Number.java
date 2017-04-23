@@ -54,7 +54,12 @@ public class Number implements XmlParser.IStringObject
     @Override
     public String toString()
     {
-        return "Number{min=" + min + ", max=" + max + ", stepsize=" + stepsize + '}';
+        return "Number{" +
+                "min=" + min +
+                ", max=" + max +
+                ", stepsize=" + stepsize +
+                ", optional=" + optional +
+                '}';
     }
 
     @Override
