@@ -5,13 +5,13 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *  Redistributions via the Curse or CurseForge platform are not allowed without
  *   written prior approval.
  *
- * + Redistributions of source code must retain the above copyright notice, this
+ *  Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- * + Redistributions in binary form must reproduce the above copyright notice,
+ *  Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -104,8 +104,6 @@ public class GuiFunction extends GuiListBase implements GuiElement.GuiElementCal
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
     {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-
         // todo: remove
         // debug start
         fontRendererObj.drawString("Generic", -200, -100, 0xFF5050);
@@ -113,13 +111,14 @@ public class GuiFunction extends GuiListBase implements GuiElement.GuiElementCal
         fontRendererObj.drawString("Current", xSize + 25, -100, 0xFF5050);
         fontRendererObj.drawSplitString(currentText, xSize + 25, -90, 200, 0xFFFFFF);
         // debug end
+
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
     {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-
         fontRendererObj.drawString(function.name, guiLeft + xSize / 2 - fontRendererObj.getStringWidth(function.name) / 2, guiTop - 10, 0xFFFFFF);
     }
 

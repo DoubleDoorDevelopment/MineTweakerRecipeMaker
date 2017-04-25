@@ -5,13 +5,13 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *  Redistributions via the Curse or CurseForge platform are not allowed without
  *   written prior approval.
  *
- * + Redistributions of source code must retain the above copyright notice, this
+ *  Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- * + Redistributions in binary form must reproduce the above copyright notice,
+ *  Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -30,8 +30,14 @@
 
 package net.doubledoordev.mtrm.client;
 
+import joptsimple.internal.Strings;
+import net.doubledoordev.mtrm.Helper;
+import net.doubledoordev.mtrm.MineTweakerRecipeMaker;
 import net.minecraft.client.gui.FontRenderer;
+import org.apache.commons.io.FileUtils;
 
+import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +48,7 @@ public class ClientHelper
 {
     public static final int[] BTN_COLORS = {0x505050, 0xAAAAAA, 0xBDC6FF, 0xFF9090};
     public static final int[] TEXT_COLORS = {0xA0A0A0, 0xE0E0E0, 0xFFFFA0, 0xF0F0F0};
+    private static File tmpFile;
 
     private ClientHelper()
     {
@@ -103,6 +110,46 @@ public class ClientHelper
             renderer.posY += renderer.FONT_HEIGHT;
             renderer.posX = x;
             renderer.renderStringAtPos(line, false);
+        }
+    }
+
+    public static void download()
+    {
+        try
+        {
+            tmpFile = File.createTempFile(Helper.MODID + "_", ".zs");
+
+            // todo: actually download
+            FileUtils.copyFile(Helper.getScriptFile(), tmpFile);
+
+            String ee = MineTweakerRecipeMaker.getExternalEditor();
+
+            if (Strings.isNullOrEmpty(ee))
+            {
+                Desktop.getDesktop().open(tmpFile);
+            }
+            else
+            {
+                Runtime.getRuntime().exec(ee.replace("%f", tmpFile.getAbsolutePath()));
+            }
+        }
+        catch (Exception e)
+        {
+            MineTweakerRecipeMaker.log().error("Can't download & edit.", e);
+        }
+    }
+
+    public static void upload()
+    {
+        try
+        {
+            MineTweakerRecipeMaker.log().info(FileUtils.readFileToString(tmpFile, "UTF-8"));
+
+            tmpFile.delete();
+        }
+        catch (Exception e)
+        {
+            MineTweakerRecipeMaker.log().error("Can't upload! Changes may be lost!", e);
         }
     }
 }

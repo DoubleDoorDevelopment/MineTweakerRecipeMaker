@@ -5,13 +5,13 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *  Redistributions via the Curse or CurseForge platform are not allowed without
  *   written prior approval.
  *
- * + Redistributions of source code must retain the above copyright notice, this
+ *  Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- * + Redistributions in binary form must reproduce the above copyright notice,
+ *  Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -126,6 +126,7 @@ public final class Helper
 
     public static void makeReadme(File file) throws IOException
     {
+        file = new File(file, "README.txt");
         FileUtils.writeLines(file, Arrays.asList(
                 "If you want to manually add or edit XML config files, put them in there like they would be in a resourcepack.",
                 "This WILL override existing files if they already exist. There will be no version checking!",
@@ -165,7 +166,7 @@ public final class Helper
         {
             modFolder.mkdirs();
         }
-        Helper.makeReadme(new File(modFolder, "README.txt"));
+        Helper.makeReadme(modFolder);
         File rootFolder = new File(modFolder, "overrides");
         if (!rootFolder.exists())
         {

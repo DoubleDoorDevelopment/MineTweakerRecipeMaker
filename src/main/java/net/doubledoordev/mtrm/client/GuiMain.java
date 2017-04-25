@@ -5,13 +5,13 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *  Redistributions via the Curse or CurseForge platform are not allowed without
  *   written prior approval.
  *
- * + Redistributions of source code must retain the above copyright notice, this
+ *  Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- * + Redistributions in binary form must reproduce the above copyright notice,
+ *  Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -31,6 +31,7 @@
 package net.doubledoordev.mtrm.client;
 
 import net.doubledoordev.mtrm.Helper;
+import net.doubledoordev.mtrm.MineTweakerRecipeMaker;
 import net.doubledoordev.mtrm.client.elements.ButtonElement;
 import net.doubledoordev.mtrm.client.elements.GuiElement;
 import net.doubledoordev.mtrm.client.parts.GuiIconButton;
@@ -38,6 +39,7 @@ import net.doubledoordev.mtrm.client.parts.Icon;
 import net.doubledoordev.mtrm.xml.Root;
 import net.doubledoordev.mtrm.xml.XmlParser;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.text.TextFormatting;
 
@@ -65,6 +67,7 @@ public class GuiMain extends GuiListBase
     {
         if (reload)
         {
+            MineTweakerRecipeMaker.reloadConfig();
             XmlParser.reload();
         }
         List<Root> roots = XmlParser.getLoadedRootXmls();
@@ -108,7 +111,7 @@ public class GuiMain extends GuiListBase
         super.initGui();
 
         buttonList.add(btnEdit = new GuiIconButton(BTN_EDIT, guiLeft + xSize, guiTop + 50, "Edit script file", Icon.PENCIL));
-        buttonList.add(btnReload = new GuiIconButton(BTN_RELOAD, guiLeft + xSize, guiTop + 70, "Reload XML files", Icon.REDO));
+        buttonList.add(btnReload = new GuiIconButton(BTN_RELOAD, guiLeft + xSize, guiTop + 70, "Reload config files", Icon.REDO));
 
         btnOk.visible = false;
         btnCancel.enabled = true;
@@ -216,7 +219,24 @@ public class GuiMain extends GuiListBase
         case BTN_RELOAD:
             load(true);
             break;
-// todo            case BTN_EDIT: this.mc.displayGuiScreen(new GuiList()); break;
+        case BTN_EDIT:
+            ClientHelper.download();
+            this.mc.displayGuiScreen(new GuiYesNo(this, "Save changes made?", "", BTN_EDIT));
+            break;
+        }
+    }
+
+    @Override
+    public void confirmClicked(boolean result, int id)
+    {
+        switch (id)
+        {
+        case BTN_EDIT:
+            ClientHelper.upload();
+            mc.displayGuiScreen(this);
+            break;
+        default:
+            super.confirmClicked(result, id);
         }
     }
 }

@@ -5,13 +5,13 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *  Redistributions via the Curse or CurseForge platform are not allowed without
  *   written prior approval.
  *
- * + Redistributions of source code must retain the above copyright notice, this
+ *  Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- * + Redistributions in binary form must reproduce the above copyright notice,
+ *  Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -33,6 +33,7 @@ package net.doubledoordev.mtrm;
 import com.google.common.collect.ImmutableList;
 import net.doubledoordev.mtrm.xml.XmlParser;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModMetadata;
@@ -61,11 +62,13 @@ public class MineTweakerRecipeMaker
     private ModMetadata metadata;
 
     private Logger log;
+    private Configuration config;
 
-    public static Logger log()
-    {
-        return instance.log;
-    }
+    private String externalEditor;
+
+    public static Logger log() { return instance.log; }
+
+    public static String getExternalEditor() { return instance.externalEditor; }
 
 //    private SimpleNetworkWrapper snw;
 //
@@ -100,7 +103,7 @@ public class MineTweakerRecipeMaker
     }
 
     @Mod.EventHandler
-    public void init(FMLPreInitializationEvent event)
+    public void preInit(FMLPreInitializationEvent event)
     {
         log = event.getModLog();
 
@@ -112,10 +115,25 @@ public class MineTweakerRecipeMaker
 //        snw.registerMessage(MessageList.Handler.class, MessageList.class, id++, Side.SERVER);
 //        snw.registerMessage(MessageConfirmEdit.Handler.class, MessageConfirmEdit.class, id++, Side.CLIENT);
 //        snw.registerMessage(MessageReload.Handler.class, MessageReload.class, id++, Side.CLIENT);
+
+        config = new Configuration(event.getSuggestedConfigurationFile());
+        reloadConfig();
+    }
+
+    public static void reloadConfig()
+    {
+        final Configuration config = instance.config;
+
+        instance.externalEditor = config.getString("external_editor", Configuration.CATEGORY_CLIENT, "", "Open the config with a specific editor instead of the system default. Use %f for the full path to the file. It will be stored in your environment temp folder when you edit.");
+
+        if (config.hasChanged())
+        {
+            config.save();
+        }
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent event) throws Exception
+    public void preInit(FMLInitializationEvent event) throws Exception
     {
         // Register the "vanilla" XML first, to allow others to reference it.
         XmlParser.addRootXml(new ResourceLocation(Helper.MODID.toLowerCase(), "vanilla"));
@@ -126,13 +144,7 @@ public class MineTweakerRecipeMaker
     {
         Helper.loadOverrides(ImmutableList.<File>of());
         // Now register all the manual XML files
-        File modFolder = new File(Loader.instance().getConfigDir(), Helper.MODID);
-        if (!modFolder.exists())
-        {
-            modFolder.mkdirs();
-        }
-        Helper.makeReadme(new File(modFolder, "README.txt"));
-        File rootFolder = new File(modFolder, "overrides");
+        File rootFolder = new File(new File(Loader.instance().getConfigDir(), Helper.MODID), "overrides");
         if (!rootFolder.exists())
         {
             rootFolder.mkdirs();

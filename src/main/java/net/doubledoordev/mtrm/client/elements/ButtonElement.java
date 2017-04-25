@@ -5,13 +5,13 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *  Redistributions via the Curse or CurseForge platform are not allowed without
  *   written prior approval.
  *
- * + Redistributions of source code must retain the above copyright notice, this
+ *  Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- * + Redistributions in binary form must reproduce the above copyright notice,
+ *  Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -53,7 +53,7 @@ import static net.minecraft.client.renderer.GlStateManager.SourceFactor.SRC_ALPH
  */
 public abstract class ButtonElement extends GuiElement
 {
-    protected final FontRenderer fontRendererObj;
+    protected FontRenderer fontRendererObj;
     protected final Minecraft mc;
 
     protected int defaultHeight;
@@ -165,6 +165,7 @@ public abstract class ButtonElement extends GuiElement
     public void setDisplayText(String target)
     {
         displayTextOriginal = target;
+        if (target.length() == 0) return;
         if (fontRendererObj.getStringWidth(target) > width - 10)
         {
             displayText = ClientHelper.split(fontRendererObj, target, width - 10, 1).get(0);

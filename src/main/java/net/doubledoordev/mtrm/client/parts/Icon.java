@@ -5,13 +5,13 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *  Redistributions via the Curse or CurseForge platform are not allowed without
  *   written prior approval.
  *
- * + Redistributions of source code must retain the above copyright notice, this
+ *  Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- * + Redistributions in binary form must reproduce the above copyright notice,
+ *  Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -38,18 +38,23 @@ import net.minecraft.util.ResourceLocation;
 public enum Icon
 {
     CHECK, CROSS, PLUS, MINUS, LEFT, RIGHT, UP, DOWN, LEFT_ALT(LEFT), RIGHT_ALT(RIGHT), UP_ALT(UP), DOWN_ALT(DOWN), COPY, PASTE, NEW, PENCIL,
-    REDO, UNDO, REDO_ALT(REDO), UNDO_ALT(UNDO);
+    REDO, UNDO, REDO_ALT(REDO), UNDO_ALT(UNDO), SMALL_PLUS, SMALL_MINUS;
 
     public static final ResourceLocation TEXTURE = new ResourceLocation("mtrm:gui/icons.png");
 
     static
     {
-        LEFT.alt = LEFT_ALT;
-        RIGHT.alt = RIGHT_ALT;
-        UP.alt = UP_ALT;
-        DOWN.alt = DOWN_ALT;
-        REDO.alt = REDO_ALT;
-        UNDO.alt = UNDO_ALT;
+        Icon[] vals = Icon.values();
+        for (int i = 0; i < Icon.values().length - 1; i++)
+        {
+            for (int j = i; j < Icon.values().length; j++)
+            {
+                if (vals[j].alt == vals[i].alt)
+                {
+                    vals[i].alt = vals[j].alt;
+                }
+            }
+        }
     }
 
     private Icon alt;

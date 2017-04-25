@@ -5,13 +5,13 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *  Redistributions via the Curse or CurseForge platform are not allowed without
  *   written prior approval.
  *
- * + Redistributions of source code must retain the above copyright notice, this
+ *  Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- * + Redistributions in binary form must reproduce the above copyright notice,
+ *  Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -63,7 +63,7 @@ public abstract class GuiListBase extends GuiBase implements GuiElement.GuiEleme
     /**
      * This function moves all the elements around to 'scroll' and causes them to be (in)visible when appropriate.
      * Call after updating any heights or when element list is modified.
-     * Already called at init.
+     * Already called at preInit.
      */
     protected void doListCalculations()
     {

@@ -5,13 +5,13 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *  Redistributions via the Curse or CurseForge platform are not allowed without
  *   written prior approval.
  *
- * + Redistributions of source code must retain the above copyright notice, this
+ *  Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- * + Redistributions in binary form must reproduce the above copyright notice,
+ *  Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -88,16 +88,6 @@ public class Array implements XmlParser.IStringObject
         {
             Array sub = ((Array) component);
             dim = sub.dim + 1;
-
-            // todo: remove this contraint?
-            if (!(sub.component instanceof Slot || sub.component instanceof Oredict))
-            {
-                throw new IllegalArgumentException("MTRM only supports 2d arrays of Items or Oredicts");
-            }
-            if (dim > 2)
-            {
-                throw new IllegalArgumentException("MTRM doesn't support more than 2 dimensions to an array.");
-            }
         }
         else
         {
