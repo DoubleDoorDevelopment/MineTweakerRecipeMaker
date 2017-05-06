@@ -80,20 +80,20 @@ public class MineTweakerRecipeMaker
     /*
      * If the mod is only installed on the server, we are fine.
      * If the mod version is lower then 2.0, panic.
+     * If the mod version is ${version}, we are in dev, assume we are good.
      */
     @NetworkCheckHandler
     public boolean networkChecker(Map<String, String> mods, Side side)
     {
-        if (true)
-        {
-            return true; //fixme: doesn't work in dev env?
-        }
-
         if (!mods.containsKey(Helper.MODID))
         {
             return side.isClient();
         }
         DefaultArtifactVersion remote = new DefaultArtifactVersion("Remote", mods.get(Helper.MODID));
+        if (remote.getVersionString().equals("${version}"))
+        {
+            return true;
+        }
         if (!new DefaultArtifactVersion("Minimum2.0", "[2.0,)").getRange().containsVersion(remote))
         {
             return false;

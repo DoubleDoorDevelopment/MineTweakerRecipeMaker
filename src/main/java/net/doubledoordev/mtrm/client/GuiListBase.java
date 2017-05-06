@@ -208,12 +208,14 @@ public abstract class GuiListBase extends GuiBase implements GuiElement.GuiEleme
     {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         GlStateManager.pushMatrix();
-        GlStateManager.translate(-guiLeft, -guiTop, 0.0F);
         for (GuiElement obj : guiElements)
         {
             if (obj.isVisible() && obj.isOver(mouseX, mouseY))
             {
+                GlStateManager.pushMatrix();
+                GlStateManager.translate(-obj.getPosX(), -obj.getPosY(), 0.0F);
                 obj.drawHover(mouseX, mouseY, width, height);
+                GlStateManager.popMatrix();
             }
         }
         GlStateManager.popMatrix();

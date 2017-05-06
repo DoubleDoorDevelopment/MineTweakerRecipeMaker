@@ -5,13 +5,13 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *  Redistributions via the Curse or CurseForge platform are not allowed without
  *   written prior approval.
  *
- * + Redistributions of source code must retain the above copyright notice, this
+ *  Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- * + Redistributions in binary form must reproduce the above copyright notice,
+ *  Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -46,7 +46,7 @@ import static net.minecraft.inventory.ClickType.QUICK_MOVE;
  */
 public class InventoryContainer extends Container
 {
-    public final int offsetX = 217;
+    public final int offsetX = 168;
     public final int offsetY = 48;
 
     private final EntityPlayer player;

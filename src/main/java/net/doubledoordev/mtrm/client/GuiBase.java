@@ -5,13 +5,13 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * + Redistributions via the Curse or CurseForge platform are not allowed without
+ *  Redistributions via the Curse or CurseForge platform are not allowed without
  *   written prior approval.
  *
- * + Redistributions of source code must retain the above copyright notice, this
+ *  Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  *
- * + Redistributions in binary form must reproduce the above copyright notice,
+ *  Redistributions in binary form must reproduce the above copyright notice,
  *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
  *
@@ -91,7 +91,7 @@ public abstract class GuiBase extends GuiContainer
         Keyboard.enableRepeatEvents(true);
 
         guiLeft = (width - xSize) / 2;
-        guiTop = (height - ySize) / 2;
+        guiTop = (height - ySize) / 2 - 40;
 
         buttonList.clear();
 
@@ -112,7 +112,7 @@ public abstract class GuiBase extends GuiContainer
         mc.getTextureManager().bindTexture(INVENTORY);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         // 88 = 176/2 = width of inventory gui
-        drawTexturedModalRect(guiLeft + xSize / 2 - 88, guiTop + ySize + 9, 0, 0, 176, 90);
+        drawTexturedModalRect(guiLeft + xSize / 2 - 88, guiTop + ySize, 0, 0, 176, 90);
 
         mc.getTextureManager().bindTexture(BASE);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
