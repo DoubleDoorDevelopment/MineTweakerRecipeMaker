@@ -199,21 +199,6 @@ public class MessageSend implements IMessage
             }
             if (!i.hasNext()) return new MessageResponse(MessageResponse.Status.WRITE_ERROR, "Cannot find " + marker + " . Did you edit the file manually?");
             FileUtils.writeLines(file, lines);
-            try
-            {
-                FMLCommonHandler.instance().getMinecraftServerInstance().callFromMainThread(new Callable<Void>() {
-                    @Override
-                    public Void call() throws Exception
-                    {
-                        Class.forName("minetweaker.MineTweakerImplementationAPI").getDeclaredMethod("reload").invoke(null);
-                        return null;
-                    }
-                });
-            }
-            catch (Exception e)
-            {
-                MineTweakerRecipeMaker.getLogger().info("Auto reload failed. Nothing to be worried about, just annoying.", e);
-            }
         }
         catch (IOException e)
         {
