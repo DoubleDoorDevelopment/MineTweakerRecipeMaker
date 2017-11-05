@@ -76,3 +76,21 @@ processResources {
         exclude 'mcmod.info'
     }
 }
+
+task deobfJar(type: Jar, dependsOn: 'jar') {
+    from sourceSets.main.output
+    classifier "dev"
+    appendix = project.minecraft.version
+}
+sourceJar {
+    exclude("com/**")
+    classifier "src"
+    appendix = project.minecraft.version
+}
+jar {
+    exclude("com/**")
+    appendix = project.minecraft.version
+}
+artifacts {
+    archives deobfJar
+}
