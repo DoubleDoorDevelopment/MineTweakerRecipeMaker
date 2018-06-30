@@ -111,12 +111,6 @@ public class OredictElement extends SlotElement
     }
 
     @Override
-    protected void focusStatusChanged()
-    {
-        super.focusStatusChanged();
-    }
-
-    @Override
     protected void setItemStack(ItemStack input)
     {
         if (input == null)

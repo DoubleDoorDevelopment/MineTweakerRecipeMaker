@@ -66,13 +66,12 @@ public abstract class GuiBase extends GuiContainer
 
     {
         xSize = 256;
-        ySize = 200;
+        ySize = 260;
     }
 
     public GuiBase(Container inventorySlotsIn)
     {
         super(inventorySlotsIn);
-
     }
 
     protected abstract void exit();
@@ -91,7 +90,7 @@ public abstract class GuiBase extends GuiContainer
         Keyboard.enableRepeatEvents(true);
 
         guiLeft = (width - xSize) / 2;
-        guiTop = (height - ySize) / 2 - 40;
+        guiTop = (height - ySize) / 2;
 
         buttonList.clear();
 
@@ -112,16 +111,16 @@ public abstract class GuiBase extends GuiContainer
         mc.getTextureManager().bindTexture(INVENTORY);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         // 88 = 176/2 = width of inventory gui
-        drawTexturedModalRect(guiLeft + xSize / 2 - 88, guiTop + ySize, 0, 0, 176, 90);
+        drawTexturedModalRect(guiLeft + xSize / 2 - 88, guiTop + 200, 0, 0, 176, 90);
 
         mc.getTextureManager().bindTexture(BASE);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+        drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, 200);
 
         int left = guiLeft + xSize - 23;
         int right = guiLeft + xSize - 11;
         int top = guiTop + 7;
-        int bottom = guiTop + ySize - 8;
+        int bottom = guiTop + 200 - 8;
 
         boolean leftClick = Mouse.isButtonDown(0);
 

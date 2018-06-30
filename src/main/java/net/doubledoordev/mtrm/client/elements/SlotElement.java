@@ -118,6 +118,7 @@ public class SlotElement extends GuiElement
     {
         mc.getTextureManager().bindTexture(BASE);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        if (isFocused()) drawRect(posX, posY, posX + width, posY + height, 0xAAFF0000);
         drawTexturedModalRect(posX, posY, 256 - 18, 256 - 18, 18, 18);
         RenderHelper.enableGUIStandardItemLighting();
         drawItemStack(stack, posX + 1, posY + 1, null);
@@ -162,34 +163,6 @@ public class SlotElement extends GuiElement
     public void onClick(int mouseX, int mouseY, int mouseButton)
     {
         super.onClick(mouseX, mouseY, mouseButton);
-    }
-
-    @Override
-    public void setFocus(boolean focus)
-    {
-        boolean oldFocus = this.isFocused();
-        super.setFocus(focus);
-        if (oldFocus != focus)
-        {
-            focusStatusChanged();
-        }
-    }
-
-    protected void focusStatusChanged()
-    {
-        // todo: option buttons
-        // todo: add modifiers
-        if (isFocused())
-        {
-            height = 32;
-            width = 32;
-        }
-        else
-        {
-            height = 18;
-            width = 18;
-        }
-        resizeCallback();
     }
 
     protected void setItemStackOrOredict(ItemStack input)

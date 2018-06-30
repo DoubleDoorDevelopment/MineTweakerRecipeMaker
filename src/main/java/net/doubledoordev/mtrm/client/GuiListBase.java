@@ -191,7 +191,7 @@ public abstract class GuiListBase extends GuiBase implements GuiElement.GuiEleme
         listSizeX = listRight - listLeft;
 
         listTop = guiTop + 5;
-        listBottom = guiTop + ySize - 8;
+        listBottom = guiTop + 200 - 8;
         listSizeY = listBottom - listTop;
 
         for (GuiElement obj : guiElements)

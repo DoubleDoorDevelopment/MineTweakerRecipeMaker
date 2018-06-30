@@ -46,7 +46,7 @@ import static net.minecraft.inventory.ClickType.QUICK_MOVE;
  */
 public class InventoryContainer extends Container
 {
-    public final int offsetX = 168;
+    public final int offsetX = 168 + 40;
     public final int offsetY = 48;
 
     private final EntityPlayer player;
